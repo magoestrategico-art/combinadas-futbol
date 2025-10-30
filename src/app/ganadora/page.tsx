@@ -16,7 +16,7 @@ export default function GanadoraPage() {
   }, []);
 
   return (
-    <div className="max-w-xl mx-auto py-8">
+  <div className="min-h-screen w-full flex flex-col items-center justify-start" style={{ background: '#b39ddb', minHeight: '100vh', padding: '48px 0 56px 0', boxSizing: 'border-box' }}>
       <h1 className="text-3xl font-bold mb-6 text-yellow-700">Combinada Ganadora Premium</h1>
       {ganadora ? (
         <div className="bg-white p-6 rounded shadow">

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth } from "../../firebase-config";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "firebase/auth";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -10,19 +10,23 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [pendingVerification, setPendingVerification] = useState(false);
   const router = useRouter();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
+    setPendingVerification(false);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
+      await sendEmailVerification(userCredential.user);
+      setPendingVerification(true);
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
-      }, 2000);
+      }, 4000);
     } catch (err: any) {
       setError(err.message);
     }
@@ -32,6 +36,11 @@ export default function RegisterPage() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-50">
       <form onSubmit={handleRegister} className="bg-white p-8 rounded shadow-md w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-blue-700">Crear cuenta</h2>
+        {pendingVerification && (
+          <div className="mb-4 p-2 bg-yellow-100 text-yellow-800 rounded">
+            Te hemos enviado un correo de verificación. Por favor revisa tu bandeja y haz clic en el enlace para activar tu cuenta.
+          </div>
+        )}
         <input
           type="text"
           placeholder="Nombre"

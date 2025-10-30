@@ -43,7 +43,7 @@ export default function CombinadasPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 py-12">
+  <div className="min-h-screen flex flex-col items-center justify-start" style={{ background: '#23407a', minHeight: '100vh', padding: '48px 0 56px 0', boxSizing: 'border-box' }}>
       {/* Botón volver a la página principal */}
       <div className="w-full flex justify-start mb-6">
         <button

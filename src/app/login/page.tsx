@@ -21,7 +21,12 @@ export default function LoginPage() {
     setError("");
     setSuccess(false);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      if (!userCredential.user.emailVerified) {
+        setError("Debes verificar tu correo electrónico antes de acceder. Revisa tu bandeja de entrada.");
+        await signOut(auth);
+        return;
+      }
       setSuccess(true);
       setLoggedIn(true);
       setShowLogin(false);
