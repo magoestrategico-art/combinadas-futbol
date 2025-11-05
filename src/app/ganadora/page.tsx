@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { db, auth } from "../../firebase-config";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, addDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 interface Partido {
@@ -24,6 +24,7 @@ export default function GanadoraPage() {
   const [partidos, setPartidos] = useState<Partido[]>([]);
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const [saveHistorialStatus, setSaveHistorialStatus] = useState<string | null>(null);
   const router = useRouter();
 
   const defaultPartidos: Partido[] = [
@@ -119,6 +120,23 @@ export default function GanadoraPage() {
 
   const calcularCuotaTotal = () => {
     return partidos.reduce((total, p) => total * parseFloat(p.cuota || "1"), 1).toFixed(2);
+  };
+
+  const guardarAlHistorial = async () => {
+    setSaveHistorialStatus(null);
+    try {
+      await addDoc(collection(db, "historialCombinadas"), {
+        tipo: "ganadora",
+        nombre: "Combinada Ganadora Premium",
+        fechaGuardado: new Date().toISOString(),
+        partidos: partidos
+      });
+      setSaveHistorialStatus("✅ Guardada en el historial correctamente");
+      setTimeout(() => setSaveHistorialStatus(null), 3000);
+    } catch (error) {
+      console.error("Error al guardar en historial:", error);
+      setSaveHistorialStatus("❌ Error al guardar en historial");
+    }
   };
 
   if (loading) {
@@ -278,47 +296,64 @@ export default function GanadoraPage() {
         </div>
 
         {/* Botones de Admin */}
-        {isCreator && editMode && (
-          <div className="mt-8 flex gap-4 justify-center">
+        {isCreator && (
+          <div className="mt-8 flex gap-4 justify-center flex-wrap">
+            {editMode && (
+              <button
+                onClick={async () => {
+                  setSaveStatus(null);
+                  try {
+                    // Ordenar por fecha y hora antes de guardar
+                    const partidosOrdenados = [...partidos].sort((a, b) => {
+                      const convertirFecha = (fecha: string) => {
+                        const partes = fecha.split('/');
+                        if (partes.length === 3) {
+                          return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                        }
+                        return fecha;
+                      };
+                      
+                      const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
+                      const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
+                      return fechaA.getTime() - fechaB.getTime();
+                    });
+                    await setDoc(doc(db, "config", "partidosGanadora"), { partidos: partidosOrdenados });
+                    setPartidos(partidosOrdenados);
+                    setSaveStatus("Guardado correctamente");
+                    setEditMode(false);
+                  } catch (err) {
+                    setSaveStatus("Error al guardar");
+                    console.error("Error al guardar:", err);
+                  }
+                }}
+                className="bg-green-500 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-green-600 transition"
+              >
+                💾 Guardar Cambios
+              </button>
+            )}
+            
             <button
-              onClick={async () => {
-                setSaveStatus(null);
-                try {
-                  // Ordenar por fecha y hora antes de guardar
-                  const partidosOrdenados = [...partidos].sort((a, b) => {
-                    const convertirFecha = (fecha: string) => {
-                      const partes = fecha.split('/');
-                      if (partes.length === 3) {
-                        return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-                      }
-                      return fecha;
-                    };
-                    
-                    const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
-                    const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
-                    return fechaA.getTime() - fechaB.getTime();
-                  });
-                  await setDoc(doc(db, "config", "partidosGanadora"), { partidos: partidosOrdenados });
-                  setPartidos(partidosOrdenados);
-                  setSaveStatus("Guardado correctamente");
-                  setEditMode(false);
-                } catch (err) {
-                  setSaveStatus("Error al guardar");
-                  console.error("Error al guardar:", err);
-                }
-              }}
-              className="bg-green-500 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-green-600 transition"
+              onClick={guardarAlHistorial}
+              className="bg-purple-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-purple-700 transition"
             >
-              💾 Guardar Cambios
+              📁 Guardar al Historial
             </button>
           </div>
         )}
 
-        {saveStatus && (
-          <div className={`mt-4 text-center font-semibold ${saveStatus.includes("Error") ? "text-red-600" : "text-green-600"}`}>
-            {saveStatus}
-          </div>
-        )}
+        {/* Mensajes de estado */}
+        <div className="mt-4 text-center space-y-2">
+          {saveStatus && (
+            <div className={`font-semibold ${saveStatus.includes("Error") ? "text-red-600" : "text-green-600"}`}>
+              {saveStatus}
+            </div>
+          )}
+          {saveHistorialStatus && (
+            <div className={`font-semibold ${saveHistorialStatus.includes("Error") ? "text-red-600" : "text-green-600"}`}>
+              {saveHistorialStatus}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
