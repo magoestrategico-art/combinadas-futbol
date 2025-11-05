@@ -214,11 +214,18 @@ export default function GuardadasPage() {
       const codigoDoc = snapshot.docs[0];
       const codigoData = codigoDoc.data();
 
-      // Verificar si ya fue usado
-      if (codigoData.usado) {
-        alert("Este código ya ha sido utilizado");
-        setValidandoCodigo(false);
-        return;
+      // Verificar si el usuario ya tiene premium activo
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        if (userData.premiumHasta) {
+          const fechaExpiracionActual = new Date(userData.premiumHasta);
+          if (fechaExpiracionActual > new Date()) {
+            alert("Ya tienes premium activo. Espera a que expire para renovar.");
+            setValidandoCodigo(false);
+            return;
+          }
+        }
       }
 
       // Activar premium por 30 días
@@ -226,12 +233,14 @@ export default function GuardadasPage() {
       const fechaExpiracion = new Date();
       fechaExpiracion.setDate(fechaExpiracion.getDate() + 30);
 
-      // Actualizar código como usado
+      // Registrar uso del código (sin marcarlo como usado definitivamente)
+      const usosActuales = codigoData.usos || [];
       await updateDoc(doc(db, "codigosPremium", codigoDoc.id), {
-        usado: true,
-        userId: userId,
-        fechaActivacion: fechaActivacion.toISOString(),
-        fechaExpiracion: fechaExpiracion.toISOString()
+        usos: [...usosActuales, {
+          userId: userId,
+          fechaActivacion: fechaActivacion.toISOString(),
+          fechaExpiracion: fechaExpiracion.toISOString()
+        }]
       });
 
       // Actualizar usuario con premium

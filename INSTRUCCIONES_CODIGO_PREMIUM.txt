@@ -2,7 +2,8 @@
 
 ¡Gracias por tu compra!
 
-Recibirás tu código de activación por email en las próximas 24 horas.
+Tu código de activación es: PREMIUM-VIP2024
+
 
 PASOS PARA ACTIVAR:
 
@@ -12,7 +13,7 @@ PASOS PARA ACTIVAR:
 
 3. Se abrirá un modal donde debes introducir tu código
 
-4. Ingresa el código que recibiste por email (formato: PREMIUM-XXXXXX)
+4. Ingresa el código: PREMIUM-VIP2024
 
 5. Haz clic en "Activar código"
 
@@ -20,7 +21,7 @@ PASOS PARA ACTIVAR:
 
 
 📧 CONTACTO:
-Si no recibes tu código en 24 horas o tienes algún problema, contáctame por:
+Si tienes algún problema al activar el código, contáctame por:
 - Email Ko-fi (responde al email de compra)
 - Twitter/Instagram: @Vicente1742
 
