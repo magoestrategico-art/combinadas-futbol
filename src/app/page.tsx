@@ -385,7 +385,12 @@ export default function HomePage() {
           <span>🏆</span> Combinada Ganadora Premium
         </Link>
         {isCreator && (
-          <button className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-red-600 transition">Limpiar Todos los Resultados</button>
+          <>
+            <Link href="/admin-codigos" className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow hover:bg-purple-700 transition">
+              <span>🔑</span> Gestionar Códigos Premium
+            </Link>
+            <button className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-red-600 transition">Limpiar Todos los Resultados</button>
+          </>
         )}
         <Link href="/simulador" className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-green-600 transition">Simulador</Link>
       </div>
