@@ -21,6 +21,7 @@ export default function AdminCodigosPage() {
   const [loading, setLoading] = useState(true);
   const [codigos, setCodigos] = useState<Codigo[]>([]);
   const [generandoCodigo, setGenerandoCodigo] = useState(false);
+  const [codigoManual, setCodigoManual] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -68,13 +69,49 @@ export default function AdminCodigosPage() {
       await addDoc(collection(db, "codigosPremium"), {
         codigo: nuevoCodigo,
         usado: false,
+        usos: [],
         fechaCreacion: new Date().toISOString()
       });
       alert(`Código creado: ${nuevoCodigo}\n\nCópialo y envíalo al usuario que pagó en Ko-fi`);
-      cargarCodigos();
+      await cargarCodigos();
     } catch (error) {
       console.error("Error al crear código:", error);
-      alert("Error al crear el código");
+      alert(`Error al crear el código: ${error}`);
+    } finally {
+      setGenerandoCodigo(false);
+    }
+  };
+
+  const crearCodigoManual = async () => {
+    if (!codigoManual.trim()) {
+      alert("Por favor introduce un código");
+      return;
+    }
+
+    setGenerandoCodigo(true);
+    try {
+      const codigoLimpio = codigoManual.trim().toUpperCase();
+      
+      // Verificar si ya existe
+      const existe = codigos.some(c => c.codigo === codigoLimpio);
+      if (existe) {
+        alert("Este código ya existe");
+        setGenerandoCodigo(false);
+        return;
+      }
+
+      await addDoc(collection(db, "codigosPremium"), {
+        codigo: codigoLimpio,
+        usado: false,
+        usos: [],
+        fechaCreacion: new Date().toISOString()
+      });
+      alert(`Código creado: ${codigoLimpio}`);
+      setCodigoManual("");
+      await cargarCodigos();
+    } catch (error) {
+      console.error("Error al crear código:", error);
+      alert(`Error al crear el código: ${error}`);
     } finally {
       setGenerandoCodigo(false);
     }
@@ -125,13 +162,38 @@ export default function AdminCodigosPage() {
           <p className="text-gray-600 text-sm mb-4">
             Genera un código único para enviar a los usuarios que pagaron en Ko-fi
           </p>
-          <button
-            onClick={crearCodigo}
-            disabled={generandoCodigo}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition disabled:opacity-50"
-          >
-            {generandoCodigo ? "Generando..." : "✨ Generar Código Premium"}
-          </button>
+          
+          {/* Código manual */}
+          <div className="mb-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Código personalizado:</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={codigoManual}
+                onChange={(e) => setCodigoManual(e.target.value)}
+                placeholder="PREMIUM-VIP2024"
+                className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-500 focus:outline-none"
+              />
+              <button
+                onClick={crearCodigoManual}
+                disabled={generandoCodigo}
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-purple-700 transition disabled:opacity-50"
+              >
+                Crear
+              </button>
+            </div>
+          </div>
+
+          <div className="border-t pt-4">
+            <p className="text-gray-500 text-xs mb-2">O genera uno aleatorio:</p>
+            <button
+              onClick={crearCodigo}
+              disabled={generandoCodigo}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg font-bold hover:opacity-90 transition disabled:opacity-50"
+            >
+              {generandoCodigo ? "Generando..." : "✨ Generar Código Aleatorio"}
+            </button>
+          </div>
         </div>
 
         {/* Estadísticas */}
