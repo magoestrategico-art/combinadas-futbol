@@ -384,7 +384,9 @@ export default function HomePage() {
         <Link href="/ganadora" className="bg-orange-400 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow hover:bg-orange-500 transition">
           <span>🏆</span> Combinada Ganadora Premium
         </Link>
-        <button className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-red-600 transition">Limpiar Todos los Resultados</button>
+        {isCreator && (
+          <button className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-red-600 transition">Limpiar Todos los Resultados</button>
+        )}
         <Link href="/simulador" className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-green-600 transition">Simulador</Link>
       </div>
 
