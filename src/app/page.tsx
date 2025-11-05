@@ -475,8 +475,17 @@ export default function HomePage() {
                         try {
                           // Ordenar por fecha y hora antes de guardar
                           const partidosOrdenados = [...partidos10].sort((a, b) => {
-                            const fechaA = new Date(a.fecha + 'T' + (a.hora.length === 5 ? a.hora : '00:00'));
-                            const fechaB = new Date(b.fecha + 'T' + (b.hora.length === 5 ? b.hora : '00:00'));
+                            // Convertir fecha dd/mm/yyyy a yyyy-mm-dd
+                            const convertirFecha = (fecha: string) => {
+                              const partes = fecha.split('/');
+                              if (partes.length === 3) {
+                                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                              }
+                              return fecha;
+                            };
+                            
+                            const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
+                            const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos10"), { partidos: partidosOrdenados });
@@ -588,8 +597,17 @@ export default function HomePage() {
                         try {
                           // Ordenar por fecha y hora antes de guardar
                           const partidosOrdenados = [...partidos5].sort((a, b) => {
-                            const fechaA = new Date(a.fecha + 'T' + (a.hora.length === 5 ? a.hora : '00:00'));
-                            const fechaB = new Date(b.fecha + 'T' + (b.hora.length === 5 ? b.hora : '00:00'));
+                            // Convertir fecha dd/mm/yyyy a yyyy-mm-dd
+                            const convertirFecha = (fecha: string) => {
+                              const partes = fecha.split('/');
+                              if (partes.length === 3) {
+                                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                              }
+                              return fecha;
+                            };
+                            
+                            const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
+                            const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos5"), { partidos: partidosOrdenados });
@@ -701,8 +719,17 @@ export default function HomePage() {
                         try {
                           // Ordenar por fecha y hora antes de guardar
                           const partidosOrdenados = [...partidos3].sort((a, b) => {
-                            const fechaA = new Date(a.fecha + 'T' + (a.hora.length === 5 ? a.hora : '00:00'));
-                            const fechaB = new Date(b.fecha + 'T' + (b.hora.length === 5 ? b.hora : '00:00'));
+                            // Convertir fecha dd/mm/yyyy a yyyy-mm-dd
+                            const convertirFecha = (fecha: string) => {
+                              const partes = fecha.split('/');
+                              if (partes.length === 3) {
+                                return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
+                              }
+                              return fecha;
+                            };
+                            
+                            const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
+                            const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos3"), { partidos: partidosOrdenados });
