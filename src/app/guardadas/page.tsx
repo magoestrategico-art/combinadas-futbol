@@ -487,7 +487,7 @@ export default function GuardadasPage() {
                       </p>
                       <div className="flex flex-col gap-3 items-center">
                         <a
-                          href="https://ko-fi.com/Vicente1742"
+                          href="https://ko-fi.com/s/f1fa74cc26"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="bg-yellow-400 text-purple-900 px-6 py-3 rounded-full font-bold hover:bg-yellow-300 transition shadow-lg text-sm inline-block"
