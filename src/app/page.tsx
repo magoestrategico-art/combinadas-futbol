@@ -480,6 +480,7 @@ export default function HomePage() {
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos10"), { partidos: partidosOrdenados });
+                          setPartidos10(partidosOrdenados); // Actualizar estado local con orden
                           setSaveStatus10("Guardado correctamente");
                           setEditMode(false);
                         } catch (err) {
@@ -592,6 +593,7 @@ export default function HomePage() {
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos5"), { partidos: partidosOrdenados });
+                          setPartidos5(partidosOrdenados); // Actualizar estado local con orden
                           setSaveStatus5("Guardado correctamente");
                           setEditMode(false);
                         } catch (err) {
@@ -704,6 +706,7 @@ export default function HomePage() {
                             return fechaA.getTime() - fechaB.getTime();
                           });
                           await setDoc(doc(db, "config", "partidos3"), { partidos: partidosOrdenados });
+                          setPartidos3(partidosOrdenados); // Actualizar estado local con orden
                           setSaveStatus3("Guardado correctamente");
                           setEditMode(false);
                         } catch (err) {
