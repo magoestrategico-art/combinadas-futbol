@@ -298,7 +298,7 @@ export default function HomePage() {
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
       {/* Cabecera */}
       <header className="flex items-center justify-between px-8 pt-6 pb-2">
-          <h1 className="text-4xl font-extrabold text-white text-center w-full" style={{textShadow:'2px 4px 12px #000, 0 2px 0 #fff'}}>Página inicial con tabs de combinadas</h1>
+          <h1 className="text-4xl font-extrabold text-white text-center w-full" style={{textShadow:'2px 4px 12px #000, 0 2px 0 #fff'}}>Apuestas Combinadas con Estrategia</h1>
         <div className="absolute top-4 right-6 flex gap-2">
           {!loggedIn ? (
             <>
