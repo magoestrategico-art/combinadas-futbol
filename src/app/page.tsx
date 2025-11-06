@@ -297,9 +297,9 @@ export default function HomePage() {
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
       {/* Cabecera */}
-      <header className="flex items-center justify-between px-8 pt-8 pb-6 border-b-2 border-white/10">
-          <h1 className="text-3xl font-extrabold text-white text-center w-full tracking-wide" style={{textShadow:'0 2px 8px rgba(0,0,0,0.3)'}}>Apuestas Combinadas con Estrategia</h1>
-        <div className="absolute top-6 right-6 flex gap-2">
+      <header className="flex items-center justify-between px-4 md:px-8 pt-6 md:pt-8 pb-4 md:pb-6 border-b-2 border-white/10">
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white text-center w-full tracking-wide" style={{textShadow:'0 2px 8px rgba(0,0,0,0.3)'}}>Apuestas Combinadas con Estrategia</h1>
+        <div className="absolute top-4 md:top-6 right-4 md:right-6 flex gap-2">
           {!loggedIn ? (
             <>
               <button
@@ -372,36 +372,36 @@ export default function HomePage() {
       )}
 
       {/* Botones principales */}
-      <div className="flex flex-wrap justify-center gap-2 mt-4 px-4">
+      <div className="flex flex-wrap justify-center gap-2 mt-3 px-3">
         {loggedIn && (
-          <Link href="/combinadas" className="bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-blue-800 transition text-sm">
+          <Link href="/combinadas" className="bg-blue-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-blue-800 transition text-xs md:text-sm">
             <span>👤</span> Mis Combinadas
           </Link>
         )}
-        <Link href="/guardadas" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-indigo-700 transition text-sm">
+        <Link href="/guardadas" className="bg-indigo-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-indigo-700 transition text-xs md:text-sm">
           <span>📁</span> Historial
         </Link>
-        <Link href="/ganadora" className="bg-orange-400 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-orange-500 transition text-sm">
+        <Link href="/ganadora" className="bg-orange-400 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-orange-500 transition text-xs md:text-sm">
           <span>🏆</span> Ganadora Premium
         </Link>
         {isCreator && (
           <>
-            <Link href="/admin-codigos" className="bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-sm">
+            <Link href="/admin-codigos" className="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-xs md:text-sm">
               <span>🔑</span> Códigos Premium
             </Link>
-            <button className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-600 transition text-sm">Limpiar Resultados</button>
+            <button className="bg-red-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:bg-red-600 transition text-xs md:text-sm">Limpiar Resultados</button>
           </>
         )}
-        <Link href="/simulador" className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition text-sm">Simulador</Link>
+        <Link href="/simulador" className="bg-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition text-xs md:text-sm">Simulador</Link>
       </div>
 
       {/* Tarjetas de combinadas con edición admin */}
-      <div className="w-full flex flex-col md:flex-row items-stretch md:items-start justify-center mt-6 gap-4 px-4">
+      <div className="w-full flex flex-col md:flex-row items-stretch md:items-start justify-center mt-4 md:mt-6 gap-6 px-3 md:px-4">
         {/* Combinada de 10 partidos */}
-        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn">
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn">
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenPremium(open => !open)}>
-            <div className="text-xl font-extrabold text-purple-700">Combinada Premium</div>
-            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-purple-500">10 Equipos</span>
+            <div className="text-lg md:text-xl font-extrabold text-purple-700">Combinada Premium</div>
+            <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-purple-500">10 Equipos</span>
             <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center transition-transform hover:rotate-180 duration-300">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
@@ -520,10 +520,10 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 5 partidos */}
-        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenClasica(open => !open)}>
-            <div className="text-xl font-extrabold text-green-700">Combinada Clásica</div>
-            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-green-500">5 Equipos</span>
+            <div className="text-lg md:text-xl font-extrabold text-green-700">Combinada Clásica</div>
+            <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-green-500">5 Equipos</span>
             <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center transition-transform hover:rotate-180 duration-300">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
@@ -642,10 +642,10 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 3 partidos */}
-        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenSelect(open => !open)}>
-            <div className="text-xl font-extrabold text-orange-600">Combinada Select</div>
-            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-orange-500">3 Equipos</span>
+            <div className="text-lg md:text-xl font-extrabold text-orange-600">Combinada Select</div>
+            <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-orange-500">3 Equipos</span>
             <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center transition-transform hover:rotate-180 duration-300">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
