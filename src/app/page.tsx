@@ -297,22 +297,22 @@ export default function HomePage() {
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
       {/* Cabecera */}
-      <header className="flex items-center justify-between px-16 pt-12 pb-2">
-          <h1 className="text-6xl font-extrabold text-white text-center w-full" style={{textShadow:'2px 4px 12px #000, 0 2px 0 #fff'}}>Página inicial con tabs de combinadas</h1>
-        <div className="absolute top-8 right-8 flex gap-2">
+      <header className="flex items-center justify-between px-8 pt-6 pb-2">
+          <h1 className="text-4xl font-extrabold text-white text-center w-full" style={{textShadow:'2px 4px 12px #000, 0 2px 0 #fff'}}>Página inicial con tabs de combinadas</h1>
+        <div className="absolute top-4 right-6 flex gap-2">
           {!loggedIn ? (
             <>
               <button
-                className="bg-blue-400 text-white px-4 py-1 rounded-full font-semibold text-base shadow hover:bg-blue-500 transition min-w-[110px]"
+                className="bg-blue-400 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-blue-500 transition"
                 onClick={() => setShowLogin(true)}
               >
                 Iniciar Sesión
               </button>
-              <Link href="/register" className="bg-green-500 text-white px-4 py-1 rounded-full font-semibold text-base shadow hover:bg-green-600 transition min-w-[110px]">Registrarse</Link>
+              <Link href="/register" className="bg-green-500 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-green-600 transition">Registrarse</Link>
             </>
           ) : (
             <button
-              className="bg-red-500 text-white px-4 py-1 rounded-full font-semibold text-base shadow hover:bg-red-600 transition min-w-[110px]"
+              className="bg-red-500 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-red-600 transition"
               onClick={handleLogout}
             >
               Cerrar Sesión
@@ -321,7 +321,7 @@ export default function HomePage() {
 
           {/* Enlace a admin-partidos solo para el creador */}
           {isCreator && (
-            <Link href="/admin-partidos" className="ml-4 bg-yellow-400 text-blue-900 px-4 py-1 rounded-full font-semibold text-base shadow hover:bg-yellow-500 transition min-w-[110px]">
+            <Link href="/admin-partidos" className="ml-2 bg-yellow-400 text-blue-900 px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-yellow-500 transition">
               Editar Partidos (Admin)
             </Link>
           )}
@@ -366,76 +366,76 @@ export default function HomePage() {
 
       {/* Mensaje de bienvenida */}
       {welcome && (
-        <div className="flex justify-center mt-6">
-          <div className="bg-green-100 text-green-800 px-6 py-3 rounded-xl font-bold shadow">{welcome}</div>
+        <div className="flex justify-center mt-3">
+          <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-semibold shadow text-sm">{welcome}</div>
         </div>
       )}
 
       {/* Botones principales */}
-      <div className="flex flex-wrap justify-center gap-4 mt-8">
+      <div className="flex flex-wrap justify-center gap-2 mt-4 px-4">
         {loggedIn && (
-          <Link href="/combinadas" className="bg-blue-700 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg border-2 border-white hover:bg-blue-800 transition">
+          <Link href="/combinadas" className="bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-blue-800 transition text-sm">
             <span>👤</span> Mis Combinadas
           </Link>
         )}
-        <Link href="/guardadas" className="bg-indigo-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg border-2 border-white hover:bg-indigo-700 transition">
-          <span>📁</span> Historial de Combinadas
+        <Link href="/guardadas" className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-indigo-700 transition text-sm">
+          <span>📁</span> Historial
         </Link>
-        <Link href="/ganadora" className="bg-orange-400 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow hover:bg-orange-500 transition">
-          <span>🏆</span> Combinada Ganadora Premium
+        <Link href="/ganadora" className="bg-orange-400 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-orange-500 transition text-sm">
+          <span>🏆</span> Ganadora Premium
         </Link>
         {isCreator && (
           <>
-            <Link href="/admin-codigos" className="bg-purple-600 text-white px-8 py-3 rounded-xl font-bold flex items-center gap-2 shadow hover:bg-purple-700 transition">
-              <span>🔑</span> Gestionar Códigos Premium
+            <Link href="/admin-codigos" className="bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-sm">
+              <span>🔑</span> Códigos Premium
             </Link>
-            <button className="bg-red-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-red-600 transition">Limpiar Todos los Resultados</button>
+            <button className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-red-600 transition text-sm">Limpiar Resultados</button>
           </>
         )}
-        <Link href="/simulador" className="bg-green-500 text-white px-8 py-3 rounded-xl font-bold shadow hover:bg-green-600 transition">Simulador</Link>
+        <Link href="/simulador" className="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition text-sm">Simulador</Link>
       </div>
 
       {/* Tarjetas de combinadas con edición admin */}
-      <div className="w-full flex flex-row items-center justify-center mt-12 gap-8">
+      <div className="w-full flex flex-row items-start justify-center mt-6 gap-4 px-4">
         {/* Combinada de 10 partidos */}
-        <div className="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center min-w-[340px] max-w-xs relative transition-all duration-200 border-2 border-gray-200">
-          <div className="flex items-center gap-4 w-full justify-between cursor-pointer" onClick={() => setOpenPremium(open => !open)}>
-            <div className="text-2xl font-extrabold text-purple-700">Combinada Premium</div>
-            <span className="rounded-full px-5 py-2 text-white font-bold text-base bg-purple-500">10 Equipos</span>
-            <span className="rounded-full bg-cyan-100 p-2 flex items-center justify-center">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
+        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs relative transition-all duration-200 border border-gray-200">
+          <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenPremium(open => !open)}>
+            <div className="text-xl font-extrabold text-purple-700">Combinada Premium</div>
+            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-purple-500">10 Equipos</span>
+            <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
           </div>
           {openPremium && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-xl shadow-2xl p-4 flex flex-col gap-4 border border-purple-200">
+            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-purple-200 max-h-[600px] overflow-y-auto">
               {partidos10.map((p, idx) => {
-                const bgColor = p.estado === "acertado" ? "bg-green-100" : p.estado === "fallado" ? "bg-red-100" : "bg-white";
-                const borderColor = p.estado === "acertado" ? "border-green-600" : p.estado === "fallado" ? "border-red-600" : "border-gray-200";
+                const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
+                const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
                 return (
-                <div key={idx} className={`${bgColor} border-[3px] ${borderColor} rounded-2xl p-4 shadow flex flex-col gap-2`}>
+                <div key={idx} className={`${bgColor} border-2 ${borderColor} rounded-lg p-3 shadow-sm flex flex-col gap-1.5`}>
                   {editMode && isCreator ? (
                     <>
-                      <input className="font-bold text-lg text-blue-900 mb-1" value={p.equipo} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, equipo: e.target.value } : x))} />
-                      <input className="text-xs font-bold text-gray-500 mb-1" value={p.liga} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, liga: e.target.value } : x))} />
-                      <input className="text-sm text-gray-700 mb-1" value={p.descripcion} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, descripcion: e.target.value } : x))} />
-                      <div className="flex gap-2 mb-1">
-                        <select className="w-24 text-xs rounded px-2 border" value={p.dia} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, dia: e.target.value } : x))}>
+                      <input className="font-bold text-base text-blue-900 mb-0.5 px-2 py-1 border rounded" value={p.equipo} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, equipo: e.target.value } : x))} />
+                      <input className="text-xs font-semibold text-gray-600 mb-0.5 px-2 py-1 border rounded" value={p.liga} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, liga: e.target.value } : x))} />
+                      <input className="text-sm text-gray-700 mb-0.5 px-2 py-1 border rounded" value={p.descripcion} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, descripcion: e.target.value } : x))} />
+                      <div className="flex gap-1 mb-0.5">
+                        <select className="w-20 text-xs rounded px-1 py-1 border" value={p.dia} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, dia: e.target.value } : x))}>
                           <option value="Lunes">Lunes</option>
                           <option value="Martes">Martes</option>
-                          <option value="Miércoles">Miércoles</option>
+                          <option value="Miércoles">Miér</option>
                           <option value="Jueves">Jueves</option>
-                          <option value="Viernes">Viernes</option>
-                          <option value="Sábado">Sábado</option>
-                          <option value="Domingo">Domingo</option>
+                          <option value="Viernes">Vier</option>
+                          <option value="Sábado">Sáb</option>
+                          <option value="Domingo">Dom</option>
                         </select>
-                        <input type="date" className="w-28 text-xs rounded px-2 border" value={p.fecha} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, fecha: e.target.value } : x))} />
-                        <input type="time" className="w-20 text-xs rounded px-2 border" value={p.hora} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, hora: e.target.value } : x))} />
+                        <input type="text" placeholder="dd/mm/yyyy" className="w-24 text-xs rounded px-1 py-1 border" value={p.fecha} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, fecha: e.target.value } : x))} />
+                        <input type="text" placeholder="HH:MM" className="w-16 text-xs rounded px-1 py-1 border" value={p.hora} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, hora: e.target.value } : x))} />
                       </div>
-                      <div className="flex gap-4 items-center mb-1">
-                        <input className="bg-orange-400 text-white font-bold rounded-full px-4 py-1 text-sm" value={p.apuesta} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, apuesta: e.target.value } : x))} />
-                        <input className="text-blue-600 font-bold text-base ml-2" value={p.cuota} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, cuota: e.target.value } : x))} />
+                      <div className="flex gap-2 items-center mb-0.5">
+                        <input className="bg-orange-400 text-white font-semibold rounded-full px-3 py-1 text-xs flex-1" value={p.apuesta} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, apuesta: e.target.value } : x))} />
+                        <input className="text-blue-600 font-bold text-sm w-16 px-1 py-1 border rounded" value={p.cuota} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, cuota: e.target.value } : x))} />
                       </div>
-                      <select className="w-32 text-xs rounded px-2 border" value={p.estado} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, estado: e.target.value } : x))}>
+                      <select className="w-28 text-xs rounded px-1 py-1 border" value={p.estado} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, estado: e.target.value } : x))}>
                         <option value="pendiente">Pendiente</option>
                         <option value="acertado">✔ Acertado</option>
                         <option value="fallado">✗ Fallado</option>
@@ -443,22 +443,22 @@ export default function HomePage() {
                     </>
                   ) : (
                     <>
-                      <div className="font-bold text-lg text-blue-900">{p.equipo}</div>
-                      <div className="inline-block bg-blue-100 text-xs font-bold text-blue-700 px-3 py-1 rounded-full mb-1">{p.liga}</div>
-                      <div className="text-sm text-gray-700 mb-1">{p.descripcion}</div>
-                      <div className="flex gap-2 mb-1">
-                        <span className="inline-flex items-center gap-1 bg-blue-50 px-2 py-1 rounded text-xs font-semibold text-blue-700"><span role="img" aria-label="calendario">📅</span>{p.dia}</span>
-                        <span className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs font-semibold text-gray-700">{p.fecha}</span>
-                        <span className="inline-flex items-center gap-1 bg-green-100 px-2 py-1 rounded text-xs font-semibold text-green-700"><span role="img" aria-label="reloj">⏰</span>{p.hora}</span>
+                      <div className="font-bold text-base text-blue-900">{p.equipo}</div>
+                      <div className="inline-block bg-blue-100 text-xs font-semibold text-blue-700 px-2 py-0.5 rounded-full mb-0.5">{p.liga}</div>
+                      <div className="text-xs text-gray-600 mb-0.5">{p.descripcion}</div>
+                      <div className="flex gap-1.5 mb-0.5 flex-wrap">
+                        <span className="inline-flex items-center gap-0.5 bg-blue-50 px-1.5 py-0.5 rounded text-xs font-semibold text-blue-700"><span role="img" aria-label="calendario">📅</span>{p.dia}</span>
+                        <span className="inline-flex items-center gap-0.5 bg-gray-100 px-1.5 py-0.5 rounded text-xs font-semibold text-gray-700">{p.fecha}</span>
+                        <span className="inline-flex items-center gap-0.5 bg-green-100 px-1.5 py-0.5 rounded text-xs font-semibold text-green-700"><span role="img" aria-label="reloj">⏰</span>{p.hora}</span>
                       </div>
-                      <div className="flex gap-4 items-center mb-1">
-                        <span className="bg-orange-400 text-white font-bold rounded-full px-4 py-1 text-sm">{p.apuesta}</span>
-                        <span className="text-blue-600 font-bold text-base ml-2">Cuota: {p.cuota}</span>
+                      <div className="flex gap-2 items-center mb-0.5">
+                        <span className="bg-orange-400 text-white font-semibold rounded-full px-3 py-1 text-xs">{p.apuesta}</span>
+                        <span className="text-blue-600 font-bold text-sm">Cuota: {p.cuota}</span>
                       </div>
-                      <div className="flex gap-2 mt-1">
-                        {p.estado === "acertado" && <span className="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-xl text-xs">✔ Acertado</span>}
-                        {p.estado === "fallado" && <span className="bg-red-100 text-red-500 font-bold px-3 py-1 rounded-xl text-xs">✗ Fallado</span>}
-                        {p.estado === "pendiente" && <span className="bg-gray-100 text-gray-500 font-bold px-3 py-1 rounded-xl text-xs">Pendiente</span>}
+                      <div className="flex gap-1.5 mt-0.5">
+                        {p.estado === "acertado" && <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-lg text-xs">✔ Acertado</span>}
+                        {p.estado === "fallado" && <span className="bg-red-100 text-red-500 font-semibold px-2 py-0.5 rounded-lg text-xs">✗ Fallado</span>}
+                        {p.estado === "pendiente" && <span className="bg-gray-100 text-gray-500 font-semibold px-2 py-0.5 rounded-lg text-xs">Pendiente</span>}
                       </div>
                     </>
                   )}
@@ -466,8 +466,8 @@ export default function HomePage() {
                 );
               })}
               {isCreator && (
-                <div className="flex gap-4 mt-6 flex-wrap">
-                  <button onClick={() => setEditMode(e => !e)} className="bg-yellow-400 text-blue-900 px-6 py-2 rounded-lg font-bold shadow hover:bg-yellow-500 transition">{editMode ? 'Cancelar' : 'Editar'}</button>
+                <div className="flex gap-2 mt-3 flex-wrap">
+                  <button onClick={() => setEditMode(e => !e)} className="bg-yellow-400 text-blue-900 px-4 py-1.5 rounded-lg font-semibold shadow hover:bg-yellow-500 transition text-sm">{editMode ? 'Cancelar' : 'Editar'}</button>
                   {editMode && (
                     <button
                       onClick={async () => {
@@ -497,22 +497,22 @@ export default function HomePage() {
                           console.error("Error al guardar partidos10:", err);
                         }
                       }}
-                      className="bg-green-500 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-green-600 transition"
+                      className="bg-green-500 text-white px-4 py-1.5 rounded-lg font-semibold shadow hover:bg-green-600 transition text-sm"
                     >
-                      Guardar Cambios
+                      💾 Guardar
                     </button>
                   )}
                   <button
                     onClick={() => guardarAlHistorial('premium', partidos10, 'Combinada Premium')}
-                    className="bg-purple-600 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-purple-700 transition"
+                    className="bg-purple-600 text-white px-4 py-1.5 rounded-lg font-semibold shadow hover:bg-purple-700 transition text-sm"
                   >
-                    📁 Guardar al Historial
+                    📁 Historial
                   </button>
                   {saveStatus10 && (
-                    <span className={saveStatus10.includes("Error") ? "text-red-600" : "text-green-600"}>{saveStatus10}</span>
+                    <span className={`text-sm font-semibold ${saveStatus10.includes("Error") ? "text-red-600" : "text-green-600"}`}>{saveStatus10}</span>
                   )}
                   {saveHistorialStatus?.tipo === 'premium' && (
-                    <span className="text-purple-700 font-semibold">{saveHistorialStatus.mensaje}</span>
+                    <span className="text-purple-700 font-semibold text-sm">{saveHistorialStatus.mensaje}</span>
                   )}
                 </div>
               )}
@@ -520,19 +520,19 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 5 partidos */}
-        <div className="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center min-w-[340px] max-w-xs relative transition-all duration-200 border-2 border-gray-200">
-          <div className="flex items-center gap-4 w-full justify-between cursor-pointer" onClick={() => setOpenClasica(open => !open)}>
-            <div className="text-2xl font-extrabold text-green-700">Combinada Clásica</div>
-            <span className="rounded-full px-5 py-2 text-white font-bold text-base bg-green-500">5 Equipos</span>
-            <span className="rounded-full bg-cyan-100 p-2 flex items-center justify-center">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
+        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs relative transition-all duration-200 border border-gray-200">
+          <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenClasica(open => !open)}>
+            <div className="text-xl font-extrabold text-green-700">Combinada Clásica</div>
+            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-green-500">5 Equipos</span>
+            <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
           </div>
           {openClasica && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-xl shadow-2xl p-4 flex flex-col gap-4 border border-green-200">
+            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-green-200 max-h-[600px] overflow-y-auto">
               {partidos5.map((p, idx) => {
-                const bgColor = p.estado === "acertado" ? "bg-green-100" : p.estado === "fallado" ? "bg-red-100" : "bg-white";
-                const borderColor = p.estado === "acertado" ? "border-green-600" : p.estado === "fallado" ? "border-red-600" : "border-gray-200";
+                const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
+                const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
                 return (
                 <div key={idx} className={`${bgColor} border-[3px] ${borderColor} rounded-2xl p-4 shadow flex flex-col gap-2`}>
                   {editMode && isCreator ? (
@@ -642,19 +642,19 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 3 partidos */}
-        <div className="bg-white rounded-2xl shadow-xl px-8 py-6 flex flex-col items-center min-w-[340px] max-w-xs relative transition-all duration-200 border-2 border-gray-200">
-          <div className="flex items-center gap-4 w-full justify-between cursor-pointer" onClick={() => setOpenSelect(open => !open)}>
-            <div className="text-2xl font-extrabold text-orange-600">Combinada Select</div>
-            <span className="rounded-full px-5 py-2 text-white font-bold text-base bg-orange-500">3 Equipos</span>
-            <span className="rounded-full bg-cyan-100 p-2 flex items-center justify-center">
-              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
+        <div className="bg-white rounded-xl shadow-lg px-5 py-4 flex flex-col items-center min-w-[300px] max-w-xs relative transition-all duration-200 border border-gray-200">
+          <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenSelect(open => !open)}>
+            <div className="text-xl font-extrabold text-orange-600">Combinada Select</div>
+            <span className="rounded-full px-4 py-1 text-white font-bold text-sm bg-orange-500">3 Equipos</span>
+            <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
             </span>
           </div>
           {openSelect && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-xl shadow-2xl p-4 flex flex-col gap-4 border border-orange-200">
+            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-orange-200 max-h-[600px] overflow-y-auto">
               {partidos3.map((p, idx) => {
-                const bgColor = p.estado === "acertado" ? "bg-green-100" : p.estado === "fallado" ? "bg-red-100" : "bg-white";
-                const borderColor = p.estado === "acertado" ? "border-green-600" : p.estado === "fallado" ? "border-red-600" : "border-gray-200";
+                const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
+                const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
                 return (
                 <div key={idx} className={`${bgColor} border-[3px] ${borderColor} rounded-2xl p-4 shadow flex flex-col gap-2`}>
                   {editMode && isCreator ? (
