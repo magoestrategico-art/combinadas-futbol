@@ -297,22 +297,22 @@ export default function HomePage() {
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
       {/* Cabecera */}
-      <header className="flex items-center justify-between px-4 md:px-8 pt-6 md:pt-8 pb-4 md:pb-6 border-b-2 border-white/10">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white text-center w-full tracking-wide" style={{textShadow:'0 2px 8px rgba(0,0,0,0.3)'}}>Apuestas Combinadas con Estrategia</h1>
-        <div className="absolute top-4 md:top-6 right-4 md:right-6 flex gap-2">
+      <header className="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-8 pt-4 md:pt-8 pb-4 md:pb-6 border-b-2 border-white/10 relative">
+        {/* Botones en móvil arriba, en desktop a la derecha */}
+        <div className="flex justify-end gap-2 mb-3 md:mb-0 md:absolute md:top-6 md:right-6">
           {!loggedIn ? (
             <>
               <button
-                className="bg-blue-400 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-blue-500 transition"
+                className="bg-blue-400 text-white px-2.5 py-1 md:px-3 md:py-1 rounded-full font-semibold text-xs md:text-sm shadow hover:bg-blue-500 transition"
                 onClick={() => setShowLogin(true)}
               >
                 Iniciar Sesión
               </button>
-              <Link href="/register" className="bg-green-500 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-green-600 transition">Registrarse</Link>
+              <Link href="/register" className="bg-green-500 text-white px-2.5 py-1 md:px-3 md:py-1 rounded-full font-semibold text-xs md:text-sm shadow hover:bg-green-600 transition">Registrarse</Link>
             </>
           ) : (
             <button
-              className="bg-red-500 text-white px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-red-600 transition"
+              className="bg-red-500 text-white px-2.5 py-1 md:px-3 md:py-1 rounded-full font-semibold text-xs md:text-sm shadow hover:bg-red-600 transition"
               onClick={handleLogout}
             >
               Cerrar Sesión
@@ -321,11 +321,14 @@ export default function HomePage() {
 
           {/* Enlace a admin-partidos solo para el creador */}
           {isCreator && (
-            <Link href="/admin-partidos" className="ml-2 bg-yellow-400 text-blue-900 px-3 py-1 rounded-full font-semibold text-sm shadow hover:bg-yellow-500 transition">
-              Editar Partidos (Admin)
+            <Link href="/admin-partidos" className="bg-yellow-400 text-blue-900 px-2.5 py-1 md:px-3 md:py-1 rounded-full font-semibold text-xs md:text-sm shadow hover:bg-yellow-500 transition">
+              Admin
             </Link>
           )}
         </div>
+        
+        {/* Título centrado */}
+        <h1 className="text-xl md:text-3xl font-extrabold text-white text-center w-full tracking-wide leading-tight" style={{textShadow:'0 2px 8px rgba(0,0,0,0.3)'}}>Apuestas Combinadas con Estrategia</h1>
       </header>
 
       {/* Modal de login */}
