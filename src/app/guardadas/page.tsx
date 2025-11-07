@@ -50,6 +50,7 @@ interface CombinadaGuardada {
 }
 
 export default function GuardadasPage() {
+  // Versión 2.0 - Grid con navegación a detalle
   const CREATOR_UID = "hDkn8W38nVZKQD1piviUrmwvHtt2";
   const [isCreator, setIsCreator] = useState(false);
   const [combinadas, setCombinadas] = useState<CombinadaGuardada[]>([]);
