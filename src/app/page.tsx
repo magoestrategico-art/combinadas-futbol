@@ -647,7 +647,9 @@ export default function HomePage() {
         {/* Combinada de 3 partidos */}
         <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto transition-all duration-300 border border-gray-200 hover:shadow-2xl md:hover:scale-105 md:hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenSelect(open => !open)}>
-            <div className="text-lg md:text-xl font-extrabold text-orange-600">Combinada Select</div>
+            <div className="text-lg md:text-xl font-extrabold text-orange-600">
+              Combinada<br className="md:hidden" /> Select
+            </div>
             <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-orange-500">3 Equipos</span>
             <span className="rounded-full bg-cyan-100 p-1.5 flex items-center justify-center transition-transform hover:rotate-180 duration-300">
               <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="#1e90ff" strokeWidth="2" strokeLinecap="round"/></svg>
