@@ -401,7 +401,7 @@ export default function HomePage() {
       {/* Tarjetas de combinadas con edición admin */}
       <div className="w-full flex flex-col md:flex-row items-stretch md:items-start justify-center mt-4 md:mt-6 gap-6 px-3 md:px-4">
         {/* Combinada de 10 partidos */}
-        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn">
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto transition-all duration-300 border border-gray-200 hover:shadow-2xl md:hover:scale-105 md:hover:-translate-y-1 animate-fadeIn">
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenPremium(open => !open)}>
             <div className="text-lg md:text-xl font-extrabold text-purple-700">Combinada Premium</div>
             <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-purple-500">10 Equipos</span>
@@ -410,7 +410,7 @@ export default function HomePage() {
             </span>
           </div>
           {openPremium && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-purple-200 max-h-[600px] overflow-y-auto animate-slideDown">
+            <div className="w-full mt-3 flex flex-col gap-2 max-h-[500px] overflow-y-auto animate-slideDown">
               {partidos10.map((p, idx) => {
                 const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
                 const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
@@ -523,7 +523,7 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 5 partidos */}
-        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto transition-all duration-300 border border-gray-200 hover:shadow-2xl md:hover:scale-105 md:hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.1s' }}>
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenClasica(open => !open)}>
             <div className="text-lg md:text-xl font-extrabold text-green-700">Combinada Clásica</div>
             <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-green-500">5 Equipos</span>
@@ -532,7 +532,7 @@ export default function HomePage() {
             </span>
           </div>
           {openClasica && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-green-200 max-h-[600px] overflow-y-auto animate-slideDown">
+            <div className="w-full mt-3 flex flex-col gap-2 max-h-[500px] overflow-y-auto animate-slideDown">
               {partidos5.map((p, idx) => {
                 const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
                 const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
@@ -645,7 +645,7 @@ export default function HomePage() {
           )}
         </div>
         {/* Combinada de 3 partidos */}
-        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto relative transition-all duration-300 border border-gray-200 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+        <div className="bg-white rounded-xl shadow-md md:shadow-lg px-4 py-3 md:px-5 md:py-4 flex flex-col items-center min-w-[300px] max-w-xs w-full md:w-auto transition-all duration-300 border border-gray-200 hover:shadow-2xl md:hover:scale-105 md:hover:-translate-y-1 animate-fadeIn" style={{ animationDelay: '0.2s' }}>
           <div className="flex items-center gap-3 w-full justify-between cursor-pointer" onClick={() => setOpenSelect(open => !open)}>
             <div className="text-lg md:text-xl font-extrabold text-orange-600">Combinada Select</div>
             <span className="rounded-full px-3 md:px-4 py-1 text-white font-bold text-xs md:text-sm bg-orange-500">3 Equipos</span>
@@ -654,7 +654,7 @@ export default function HomePage() {
             </span>
           </div>
           {openSelect && (
-            <div className="absolute left-0 top-full w-full mt-2 z-10 bg-white rounded-lg shadow-xl p-3 flex flex-col gap-2 border border-orange-200 max-h-[600px] overflow-y-auto animate-slideDown">
+            <div className="w-full mt-3 flex flex-col gap-2 max-h-[500px] overflow-y-auto animate-slideDown">
               {partidos3.map((p, idx) => {
                 const bgColor = p.estado === "acertado" ? "bg-green-50" : p.estado === "fallado" ? "bg-red-50" : "bg-white";
                 const borderColor = p.estado === "acertado" ? "border-green-500" : p.estado === "fallado" ? "border-red-500" : "border-gray-200";
