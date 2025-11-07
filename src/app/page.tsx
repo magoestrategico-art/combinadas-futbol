@@ -182,6 +182,10 @@ export default function HomePage() {
   // Contador de visitas
   const [visitas, setVisitas] = useState<number | null>(null);
 
+  // NUEVO: Estados para temporada y jornada
+  const [temporadaActual, setTemporadaActual] = useState("2024/25");
+  const [jornadaActual, setJornadaActual] = useState(1);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setLoggedIn(!!user);
@@ -225,11 +229,65 @@ export default function HomePage() {
     try {
       setSaveHistorialStatus({ tipo, mensaje: "Guardando..." });
       
+      // Extraer solo los nombres de los equipos
+      const equipos = partidos.map(p => p.equipo);
+      
+      // Guardar información completa de los partidos (equipo, apuesta, cuota)
+      const partidosInfo = partidos.map(p => ({
+        equipo: p.equipo,
+        apuesta: p.apuesta,
+        cuota: p.cuota,
+        liga: p.liga
+      }));
+      
+      // Calcular estadísticas iniciales de esta jornada
+      const acertados = partidos.filter(p => p.estado === "acertado").length;
+      const fallados = partidos.filter(p => p.estado === "fallado").length;
+      const pendientes = partidos.filter(p => p.estado === "pendiente").length;
+      const cuotaTotal = partidos.reduce((acc, p) => acc * parseFloat(p.cuota), 1);
+      
+      let estadoGeneral: "GANADA" | "PERDIDA" | "PENDIENTE" = "PENDIENTE";
+      if (fallados > 0) {
+        estadoGeneral = "PERDIDA";
+      } else if (acertados === partidos.length) {
+        estadoGeneral = "GANADA";
+      }
+
+      // Crear el objeto de resultado para la jornada actual
+      const resultadoJornadaActual = {
+        jornada: jornadaActual,
+        fecha: new Date().toISOString(),
+        acertados,
+        fallados,
+        pendientes,
+        estadoGeneral,
+        cuotaTotal
+      };
+
+      // Crear estadísticas globales iniciales
+      const estadisticas = {
+        totalJornadas: 1,
+        ganadas: estadoGeneral === "GANADA" ? 1 : 0,
+        perdidas: estadoGeneral === "PERDIDA" ? 1 : 0,
+        pendientes: estadoGeneral === "PENDIENTE" ? 1 : 0,
+        porcentajeExito: estadoGeneral === "GANADA" ? 100 : 0,
+        rachaActual: estadoGeneral === "GANADA" ? 1 : estadoGeneral === "PERDIDA" ? -1 : 0,
+        mejorRacha: estadoGeneral === "GANADA" ? 1 : 0
+      };
+
+      // Guardar en Firebase con la nueva estructura
       await addDoc(collection(db, "historialCombinadas"), {
         tipo,
-        nombre,
-        partidos,
-        fechaGuardado: new Date().toISOString()
+        nombre: `${nombre} - J${jornadaActual}`,
+        equipos,
+        partidos: partidosInfo, // NUEVO: Información completa de los partidos
+        fechaCreacion: new Date().toISOString(),
+        jornadaCreacion: jornadaActual,
+        temporada: temporadaActual,
+        resultadosPorJornada: {
+          [jornadaActual]: resultadoJornadaActual
+        },
+        estadisticas
       });
       
       setSaveHistorialStatus({ tipo, mensaje: "✓ Guardada" });
@@ -371,6 +429,32 @@ export default function HomePage() {
       {welcome && (
         <div className="flex justify-center mt-3">
           <div className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-semibold shadow text-sm">{welcome}</div>
+        </div>
+      )}
+
+      {/* NUEVO: Controles de Temporada y Jornada (solo admin) */}
+      {isCreator && (
+        <div className="flex justify-center gap-3 mt-3 px-3">
+          <div className="bg-purple-100 border-2 border-purple-400 rounded-lg px-4 py-2 flex items-center gap-2 shadow">
+            <label className="text-purple-900 font-bold text-sm">📅 Temporada:</label>
+            <input 
+              type="text" 
+              value={temporadaActual}
+              onChange={(e) => setTemporadaActual(e.target.value)}
+              className="bg-white border border-purple-300 rounded px-2 py-1 text-sm font-semibold w-24 focus:outline-none focus:border-purple-500"
+              placeholder="2024/25"
+            />
+          </div>
+          <div className="bg-green-100 border-2 border-green-400 rounded-lg px-4 py-2 flex items-center gap-2 shadow">
+            <label className="text-green-900 font-bold text-sm">🏁 Jornada:</label>
+            <input 
+              type="number" 
+              value={jornadaActual}
+              onChange={(e) => setJornadaActual(parseInt(e.target.value) || 1)}
+              className="bg-white border border-green-300 rounded px-2 py-1 text-sm font-semibold w-16 focus:outline-none focus:border-green-500"
+              min="1"
+            />
+          </div>
         </div>
       )}
 
