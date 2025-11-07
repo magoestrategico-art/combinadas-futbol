@@ -14,6 +14,8 @@ export default function HomePage() {
   const [saveStatus5, setSaveStatus5] = useState<string | null>(null);
   const [saveStatus3, setSaveStatus3] = useState<string | null>(null);
   const [saveHistorialStatus, setSaveHistorialStatus] = useState<{tipo: string, mensaje: string} | null>(null);
+  
+  // VERSIÓN: 2.0 - Sistema de Jornadas Implementado
 
   // Estructura de partido editable
   const defaultPartidos10 = [
