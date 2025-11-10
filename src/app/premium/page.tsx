@@ -16,7 +16,7 @@ export default function PremiumPage() {
   const router = useRouter();
 
   const CODIGO_PREMIUM = "FUTBOL2025";
-  const KOFI_URL = "https://ko-fi.com/vicente1742";
+  const KOFI_URL = "https://ko-fi.com/s/f1fa74cc26";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
