@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { db, auth } from "../../firebase-config";
-import { collection, getDocs, query, orderBy, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, deleteDoc, doc, updateDoc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 interface Partido {
@@ -59,14 +59,58 @@ export default function GuardadasPage() {
   const [editandoJornada, setEditandoJornada] = useState<{combinadaId: string, jornada: number} | null>(null);
   const [acertadosTemp, setAcertadosTemp] = useState(0);
   const [falladosTemp, setFalladosTemp] = useState(0);
+  const [isPremium, setIsPremium] = useState(false);
+  const [verificandoPremium, setVerificandoPremium] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setIsCreator(user?.uid === CREATOR_UID);
+      
+      if (user) {
+        await verificarAccesoPremium(user.uid);
+      } else {
+        setVerificandoPremium(false);
+        router.push("/premium");
+      }
     });
     return () => unsubscribe();
   }, []);
+
+  const verificarAccesoPremium = async (userId: string) => {
+    try {
+      // Admin siempre tiene acceso
+      if (userId === CREATOR_UID) {
+        setIsPremium(true);
+        setVerificandoPremium(false);
+        return;
+      }
+
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const ahora = new Date();
+        const expira = userData.premiumExpira?.toDate();
+        
+        if (userData.isPremium && expira && expira > ahora) {
+          setIsPremium(true);
+        } else {
+          // No premium o expirado
+          router.push("/premium");
+          return;
+        }
+      } else {
+        // Usuario sin documento
+        router.push("/premium");
+        return;
+      }
+    } catch (error) {
+      console.error("Error verificando premium:", error);
+      router.push("/premium");
+      return;
+    }
+    setVerificandoPremium(false);
+  };
 
   useEffect(() => {
     cargarCombinadas();
@@ -232,6 +276,18 @@ export default function GuardadasPage() {
     if (tipo === 'clasica') return '💚 CLÁSICA';
     return '🎯 SELECT';
   };
+
+  if (verificandoPremium || loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#204080] via-[#1e3a75] to-[#1b3366] flex items-center justify-center">
+        <div className="text-white text-xl">Verificando acceso...</div>
+      </div>
+    );
+  }
+
+  if (!isPremium) {
+    return null; // Ya redirigió a /premium
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#204080] via-[#1e3a75] to-[#1b3366] py-6 px-4 flex flex-col items-center">

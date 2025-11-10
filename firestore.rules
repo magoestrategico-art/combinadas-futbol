@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Reglas para combinadas: solo usuarios autenticados pueden leer y escribir
+    match /combinadas/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Reglas para historialCombinadas: todos pueden leer, solo admin puede escribir
+    match /historialCombinadas/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == "hDkn8W38nVZKQD1piviUrmwvHtt2";
+    }
+
+    // Reglas para combinadas_pasadas: permite leer a todos
+    match /combinadas_pasadas/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == "hDkn8W38nVZKQD1piviUrmwvHtt2";
+    }
+
+    // Reglas para users: el usuario puede leer su documento y actualizar campos premium
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth.uid == userId;
+      allow update: if request.auth.uid == userId || 
+                       request.auth.uid == "hDkn8W38nVZKQD1piviUrmwvHtt2";
+    }
+
+    // Reglas para partidos de la página principal
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == "hDkn8W38nVZKQD1piviUrmwvHtt2";
+    }
+
+    // Reglas para el contador de visitas
+    match /stats/{docId} {
+      allow read: if true;
+      allow update: if
+        request.resource.data.keys().hasOnly(['total']) &&
+        request.resource.data.total == resource.data.total + 1;
+      allow create: if true;
+    }
+
+    // Reglas para códigos premium - ADMIN puede crear, todos pueden leer y actualizar
+    match /codigosPremium/{codigoId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.auth.uid == "hDkn8W38nVZKQD1piviUrmwvHtt2";
+      allow update: if request.auth != null;
+    }
+  }
+}

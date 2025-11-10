@@ -467,6 +467,9 @@ export default function HomePage() {
             <span>👤</span> Mis Combinadas
           </Link>
         )}
+        <Link href="/premium" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-bold flex items-center gap-1 shadow-lg hover:from-yellow-500 hover:to-orange-600 transition text-xs md:text-sm animate-pulse">
+          <span>⭐</span> Hazte Premium
+        </Link>
         <Link href="/guardadas" className="bg-indigo-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-indigo-700 transition text-xs md:text-sm">
           <span>📁</span> Historial
         </Link>
