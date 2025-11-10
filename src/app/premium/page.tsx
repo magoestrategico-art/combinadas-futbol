@@ -204,7 +204,7 @@ export default function PremiumPage() {
               type="text"
               value={codigo}
               onChange={(e) => setCodigo(e.target.value.toUpperCase())}
-              placeholder="FUTBOL2025"
+              placeholder="Ingresa tu código aquí"
               className="flex-1 border-2 border-gray-300 rounded-lg px-4 py-3 text-center font-bold text-lg uppercase focus:border-blue-500 focus:outline-none"
               disabled={validando}
             />
@@ -218,7 +218,7 @@ export default function PremiumPage() {
           </div>
           
           <p className="text-xs text-gray-500 text-center mt-3">
-            El código te llegó en el mensaje de confirmación de Ko-fi
+            El código te llegó en el archivo descargado de Ko-fi
           </p>
         </div>
 
