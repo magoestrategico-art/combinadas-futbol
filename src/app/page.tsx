@@ -10,6 +10,7 @@ export default function HomePage() {
   // UID del creador (admin)
   const CREATOR_UID = "hDkn8W38nVZKQD1piviUrmwvHtt2";
   const [isCreator, setIsCreator] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const [saveStatus10, setSaveStatus10] = useState<string | null>(null);
   const [saveStatus5, setSaveStatus5] = useState<string | null>(null);
   const [saveStatus3, setSaveStatus3] = useState<string | null>(null);
@@ -189,11 +190,39 @@ export default function HomePage() {
   const [jornadaActual, setJornadaActual] = useState(1);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoggedIn(!!user);
       setIsCreator(!!user && user.uid === CREATOR_UID);
-      if (user) setWelcome("¡Bienvenido!");
-      else setWelcome("");
+      
+      if (user) {
+        setWelcome("¡Bienvenido!");
+        
+        // Verificar si es premium
+        if (user.uid === CREATOR_UID) {
+          setIsPremium(true);
+        } else {
+          try {
+            const userDoc = await getDoc(doc(db, "users", user.uid));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              const ahora = new Date();
+              const expira = userData.premiumExpira?.toDate();
+              
+              if (userData.isPremium && expira && expira > ahora) {
+                setIsPremium(true);
+              } else {
+                setIsPremium(false);
+              }
+            }
+          } catch (error) {
+            console.error("Error verificando premium:", error);
+            setIsPremium(false);
+          }
+        }
+      } else {
+        setWelcome("");
+        setIsPremium(false);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -467,9 +496,11 @@ export default function HomePage() {
             <span>👤</span> Mis Combinadas
           </Link>
         )}
-        <Link href="/premium" className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-bold flex items-center gap-1 shadow-lg hover:from-yellow-500 hover:to-orange-600 transition text-xs md:text-sm animate-pulse">
-          <span>⭐</span> Hazte Premium
-        </Link>
+        {!isPremium && (
+          <Link href="/premium" className={`bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-bold flex items-center gap-1 shadow-lg hover:from-yellow-500 hover:to-orange-600 transition text-xs md:text-sm ${loggedIn ? 'animate-pulse' : ''}`}>
+            <span>⭐</span> Hazte Premium
+          </Link>
+        )}
         <Link href="/guardadas" className="bg-indigo-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-indigo-700 transition text-xs md:text-sm">
           <span>📁</span> Historial
         </Link>
