@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { db } from "../../firebase-config";
+import { addDoc, collection } from "firebase/firestore";
 
 
 type Pick = {
@@ -23,7 +25,7 @@ const ligas = [
   { nombre: "Serie A", id: 2019 },
   { nombre: "Bundesliga", id: 2002 },
   { nombre: "Ligue 1", id: 2015 },
-  { nombre: "Segunda División", id: 2015 },
+  { nombre: "Segunda División", id: 2016 }, // id único
 ];
 const criterios = [
   { label: "+1,5 goles", value: "OVER_1_5" },
@@ -37,16 +39,36 @@ const criterios = [
 export default function CombinadaNuevaPage() {
   const router = useRouter();
     const [nombreCombinada, setNombreCombinada] = useState<string>("");
-    const guardarCombinada = () => {
+    const guardarCombinada = async () => {
       if (!resultado || !nombreCombinada.trim()) return;
-      const historial = JSON.parse(localStorage.getItem("historialCombinadas") || "[]");
-      const nueva = {
-        fecha: new Date().toISOString(),
-        nombre: nombreCombinada.trim(),
-        combinada: resultado
-      };
-      localStorage.setItem("historialCombinadas", JSON.stringify([nueva, ...historial]));
-      router.push("/guardadas");
+      try {
+        // Extraer equipos y temporada de los picks
+        const equipos = resultado.map(r => r.nombre);
+        const temporada = "2025-2026"; // Puedes automatizarlo si lo necesitas
+        await addDoc(collection(db, "historialCombinadas"), {
+          fechaCreacion: new Date().toISOString(),
+          nombre: nombreCombinada.trim(),
+          tipo: "personalizada",
+          jornadaCreacion: 1,
+          temporada,
+          equipos,
+          resultadosPorJornada: {},
+          estadisticas: {
+            totalJornadas: 0,
+            ganadas: 0,
+            perdidas: 0,
+            pendientes: 0,
+            porcentajeExito: 0,
+            rachaActual: 0,
+            mejorRacha: 0
+          },
+          combinada: resultado
+        });
+        router.push("/guardadas");
+      } catch (error) {
+        alert("Error al guardar la combinada en Firebase");
+        console.error(error);
+      }
     };
   const [picks, setPicks] = useState<Pick[]>([
     { liga: "", criterio: "" },
@@ -88,8 +110,12 @@ export default function CombinadaNuevaPage() {
     }
   };
 
+  console.log("resultado:", resultado);
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-yellow-300 to-pink-200 py-10">
+      <div className="w-full flex justify-start mb-4 max-w-2xl">
+        <a href="/" className="bg-fuchsia-200 hover:bg-fuchsia-300 text-fuchsia-900 px-5 py-2 rounded-lg font-semibold shadow transition border border-fuchsia-400">← Volver a la página principal</a>
+      </div>
       <h1 className="text-3xl font-bold mb-6 text-fuchsia-700">Combinada Personalizada (NUEVA)</h1>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl border-2 border-fuchsia-400 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -103,7 +129,7 @@ export default function CombinadaNuevaPage() {
               >
                 <option value="">Elige liga</option>
                 {ligas.map(l => (
-                  <option key={l.id} value={l.id}>{l.nombre}</option>
+                  <option key={`liga-${i}-${l.id}`} value={l.id}>{l.nombre}</option>
                 ))}
               </select>
               <select
@@ -119,7 +145,7 @@ export default function CombinadaNuevaPage() {
             </div>
           ))}
         </div>
-        <div className="text-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-4">
           <button
             onClick={generar}
             className="bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-fuchsia-600 hover:to-pink-700 transition transform hover:scale-105"
@@ -127,6 +153,24 @@ export default function CombinadaNuevaPage() {
           >
             {loading ? "Generando..." : "Generar combinada personalizada"}
           </button>
+          {resultado && (
+            <>
+              <input
+                type="text"
+                className="border rounded px-3 py-2 w-full max-w-xs text-center"
+                placeholder="Nombre de la combinada"
+                value={nombreCombinada}
+                onChange={e => setNombreCombinada(e.target.value)}
+              />
+              <button
+                onClick={guardarCombinada}
+                className={`bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition ${!nombreCombinada.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!nombreCombinada.trim()}
+              >
+                Guardar combinada
+              </button>
+            </>
+          )}
         </div>
         {error && (
           <div className="text-center text-red-600 font-bold mt-4">{error}</div>
@@ -134,16 +178,6 @@ export default function CombinadaNuevaPage() {
         {resultado && (
           <div className="mt-6">
             <h3 className="text-lg font-bold mb-2 text-fuchsia-700">Resultado:</h3>
-              <div className="mb-4 flex flex-col items-center">
-                <label className="font-semibold text-fuchsia-700 mb-1">Nombre de la combinada:</label>
-                <input
-                  type="text"
-                  className="border rounded px-3 py-2 w-full max-w-xs text-center"
-                  placeholder="Ej: Mi combinada de goles"
-                  value={nombreCombinada}
-                  onChange={e => setNombreCombinada(e.target.value)}
-                />
-              </div>
             <ul className="space-y-2">
               {resultado.map((pick, i) => (
                 <li key={i} className="bg-fuchsia-100 rounded p-3 border border-fuchsia-300">
@@ -156,18 +190,6 @@ export default function CombinadaNuevaPage() {
                 </li>
               ))}
             </ul>
-            <div className="text-center mt-6">
-              <button
-                onClick={guardarCombinada}
-                className={`bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition ${!nombreCombinada.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
-                disabled={!nombreCombinada.trim()}
-              >
-                Guardar combinada en historial
-              </button>
-              {!nombreCombinada.trim() && (
-                <div className="text-red-600 font-bold mt-2">Debes poner un nombre a la combinada</div>
-              )}
-            </div>
           </div>
         )}
       </div>
