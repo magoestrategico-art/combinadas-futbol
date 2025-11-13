@@ -36,12 +36,13 @@ const criterios = [
 
 export default function CombinadaNuevaPage() {
   const router = useRouter();
-    // Guardar combinada en localStorage y redirigir a historial
+    const [nombreCombinada, setNombreCombinada] = useState<string>("");
     const guardarCombinada = () => {
       if (!resultado) return;
       const historial = JSON.parse(localStorage.getItem("historialCombinadas") || "[]");
       const nueva = {
         fecha: new Date().toISOString(),
+        nombre: nombreCombinada || `Combinada ${new Date().toLocaleString()}`,
         combinada: resultado
       };
       localStorage.setItem("historialCombinadas", JSON.stringify([nueva, ...historial]));
@@ -133,6 +134,16 @@ export default function CombinadaNuevaPage() {
         {resultado && (
           <div className="mt-6">
             <h3 className="text-lg font-bold mb-2 text-fuchsia-700">Resultado:</h3>
+              <div className="mb-4 flex flex-col items-center">
+                <label className="font-semibold text-fuchsia-700 mb-1">Nombre de la combinada:</label>
+                <input
+                  type="text"
+                  className="border rounded px-3 py-2 w-full max-w-xs text-center"
+                  placeholder="Ej: Mi combinada de goles"
+                  value={nombreCombinada}
+                  onChange={e => setNombreCombinada(e.target.value)}
+                />
+              </div>
             <ul className="space-y-2">
               {resultado.map((pick, i) => (
                 <li key={i} className="bg-fuchsia-100 rounded p-3 border border-fuchsia-300">
