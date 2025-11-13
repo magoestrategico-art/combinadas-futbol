@@ -385,13 +385,15 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
-      <div className="w-full flex justify-center mt-4 mb-6">
-        <Link href="/combinada-nueva">
-          <button className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition">
-            🚀 Ir a Combinada Personalizada
-          </button>
-        </Link>
-      </div>
+      {isCreator && (
+        <div className="w-full flex justify-center mt-4 mb-6">
+          <Link href="/combinada-nueva">
+            <button className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition">
+              🚀 Ir a Combinada Personalizada
+            </button>
+          </Link>
+        </div>
+      )}
       {/* Cabecera */}
       <header className="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-8 pt-4 md:pt-8 pb-4 md:pb-6 border-b-2 border-white/10 relative">
         {/* Botones en móvil arriba, en desktop a la derecha */}
