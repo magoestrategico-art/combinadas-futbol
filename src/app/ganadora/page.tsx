@@ -17,6 +17,42 @@ interface Partido {
   estado: string;
 }
 
+interface PartidoSelect {
+  equipoLocal: string;
+  equipoVisitante: string;
+  fecha: string;
+  liga: string;
+  criterio: string;
+  seleccion: string;
+  cuota: number;
+  justificacion: string;
+}
+
+interface EquipoGanadora {
+  nombre: string;
+  liga: string;
+  criterio: string;
+  apuesta: string;
+  cuota: number;
+  justificacion: string;
+}
+
+interface CombinadaSelectData {
+  nombre: string;
+  fecha: string;
+  picks: PartidoSelect[];
+  cuotaTotal: number;
+  numPicks: number;
+}
+
+interface CombinadaGanadoraData {
+  nombre: string;
+  fecha: string;
+  picks: EquipoGanadora[];
+  cuotaTotal: number;
+  numPicks: number;
+}
+
 export default function GanadoraPage() {
   const CREATOR_UID = "hDkn8W38nVZKQD1piviUrmwvHtt2";
   const [isCreator, setIsCreator] = useState(false);
@@ -25,6 +61,23 @@ export default function GanadoraPage() {
   const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const [saveHistorialStatus, setSaveHistorialStatus] = useState<string | null>(null);
+  const [combinadaSelect, setCombinadaSelect] = useState<CombinadaSelectData | null>(null);
+  const [loadingSelect, setLoadingSelect] = useState(false);
+  const [errorSelect, setErrorSelect] = useState<string | null>(null);
+  const [combinadaGanadora, setCombinadaGanadora] = useState<CombinadaGanadoraData | null>(null);
+  const [loadingGanadora, setLoadingGanadora] = useState(false);
+  const [errorGanadora, setErrorGanadora] = useState<string | null>(null);
+  // --- Estados para combinada personalizada ---
+  const [personalizada, setPersonalizada] = useState([
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },
+  ]);
+  const [resultadoPersonalizada, setResultadoPersonalizada] = useState<any>(null);
+  const [loadingPersonalizada, setLoadingPersonalizada] = useState(false);
+  const [errorPersonalizada, setErrorPersonalizada] = useState<string | null>(null);
   const router = useRouter();
 
   const defaultPartidos: Partido[] = [
@@ -95,6 +148,46 @@ export default function GanadoraPage() {
     return () => unsubscribe();
   }, []);
 
+  const generarCombinadaAutomatica = async () => {
+    setLoadingSelect(true);
+    setErrorSelect(null);
+    try {
+      const response = await fetch('/api/generar-combinada-select');
+      const data = await response.json();
+      
+      if (data.success) {
+        setCombinadaSelect(data.data);
+      } else {
+        setErrorSelect(data.error || 'Error al generar combinada');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorSelect('Error de conexión. Intenta de nuevo.');
+    } finally {
+      setLoadingSelect(false);
+    }
+  };
+
+  const generarCombinadaGanadoraAuto = async () => {
+    setLoadingGanadora(true);
+    setErrorGanadora(null);
+    try {
+      const response = await fetch('/api/generar-combinada-ganadora');
+      const data = await response.json();
+      
+      if (data.success) {
+        setCombinadaGanadora(data.data);
+      } else {
+        setErrorGanadora(data.error || 'Error al generar combinada');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setErrorGanadora('Error de conexión. Intenta de nuevo.');
+    } finally {
+      setLoadingGanadora(false);
+    }
+  };
+
   const cargarPartidos = async () => {
     try {
       const docRef = doc(db, "config", "partidosGanadora");
@@ -147,9 +240,56 @@ export default function GanadoraPage() {
     );
   }
 
+  // --- Formulario de combinada personalizada ---
+  const ligasDisponibles = [
+    { nombre: "La Liga", id: 2014 },
+    { nombre: "Premier League", id: 2021 },
+    { nombre: "Serie A", id: 2019 },
+    { nombre: "Bundesliga", id: 2002 },
+    { nombre: "Ligue 1", id: 2015 },
+    { nombre: "Segunda División", id: 2015 },
+  ];
+  const criteriosDisponibles = [
+    { label: "+1,5 goles", value: "OVER_1_5" },
+    { label: "-3,5 goles", value: "UNDER_3_5" },
+    { label: "Ganador", value: "GANADOR" },
+    { label: "Perdedor", value: "PERDEDOR" },
+    { label: "Empate", value: "EMPATE" },
+  ];
+  // ...
+
+  const handlePersonalizadaChange = (i: number, campo: 'liga' | 'criterio', valor: string) => {
+    const nueva = [...personalizada];
+    nueva[i][campo] = valor;
+    setPersonalizada(nueva);
+  };
+
+  const generarCombinadaPersonalizada = async () => {
+    setLoadingPersonalizada(true);
+    setErrorPersonalizada(null);
+    setResultadoPersonalizada(null);
+    try {
+      const response = await fetch('/api/generar-combinada-personalizada', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ picks: personalizada })
+      });
+      const data = await response.json();
+      if (data.success) {
+        setResultadoPersonalizada({ picks: data.data });
+      } else {
+        setErrorPersonalizada(data.error || 'Error al generar combinada personalizada');
+      }
+    } catch (e) {
+      setErrorPersonalizada('Error generando combinada personalizada');
+    } finally {
+      setLoadingPersonalizada(false);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-start" style={{ background: 'linear-gradient(135deg, #ffd700 0%, #ffed4e 100%)', minHeight: '100vh', padding: '48px 20px 56px 20px', boxSizing: 'border-box' }}>
-      
+
       {/* Header */}
       <div className="w-full max-w-4xl mb-6 flex justify-between items-center">
         <button
@@ -170,191 +310,70 @@ export default function GanadoraPage() {
         )}
       </div>
 
-      {/* Card Principal */}
-      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-4xl border-4 border-yellow-600">
-        
-        {/* Título */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-black text-yellow-700 mb-2">🏆 COMBINADA GANADORA PREMIUM</h1>
-          <p className="text-gray-600 font-semibold">5 Partidos Seleccionados</p>
-          <div className="mt-4 bg-gradient-to-r from-yellow-400 to-yellow-600 text-white px-6 py-3 rounded-full inline-block font-black text-2xl shadow-lg">
-            Cuota Total: {calcularCuotaTotal()}
-          </div>
+      {/* Formulario de combinada personalizada */}
+      <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-4xl border-4 border-fuchsia-600 mb-8">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-black text-fuchsia-700 mb-2">🎯 COMBINADA PERSONALIZADA</h2>
+          <p className="text-gray-600 font-semibold">Elige hasta 5 ligas y criterios, y genera tu propia combinada con datos de la temporada 2025-2026</p>
         </div>
-
-        {/* Lista de Partidos */}
-        <div className="space-y-4">
-          {partidos.map((partido, index) => (
-            <div key={index} className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-5 border-2 border-yellow-300 shadow-md hover:shadow-lg transition">
-              {editMode ? (
-                <div className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      value={partido.equipo}
-                      onChange={(e) => actualizarPartido(index, "equipo", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2 font-bold"
-                      placeholder="Equipo"
-                    />
-                    <input
-                      type="text"
-                      value={partido.liga}
-                      onChange={(e) => actualizarPartido(index, "liga", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2"
-                      placeholder="Liga"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    value={partido.descripcion}
-                    onChange={(e) => actualizarPartido(index, "descripcion", e.target.value)}
-                    className="w-full border-2 border-gray-300 rounded px-3 py-2"
-                    placeholder="Descripción"
-                  />
-                  <div className="grid grid-cols-4 gap-2">
-                    <input
-                      type="text"
-                      value={partido.dia}
-                      onChange={(e) => actualizarPartido(index, "dia", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2"
-                      placeholder="Día"
-                    />
-                    <input
-                      type="text"
-                      value={partido.fecha}
-                      onChange={(e) => actualizarPartido(index, "fecha", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2"
-                      placeholder="dd/mm/yyyy"
-                    />
-                    <input
-                      type="text"
-                      value={partido.hora}
-                      onChange={(e) => actualizarPartido(index, "hora", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2"
-                      placeholder="HH:MM"
-                    />
-                    <input
-                      type="text"
-                      value={partido.cuota}
-                      onChange={(e) => actualizarPartido(index, "cuota", e.target.value)}
-                      className="border-2 border-gray-300 rounded px-3 py-2"
-                      placeholder="Cuota"
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    value={partido.apuesta}
-                    onChange={(e) => actualizarPartido(index, "apuesta", e.target.value)}
-                    className="w-full border-2 border-gray-300 rounded px-3 py-2 font-semibold"
-                    placeholder="Tipo de apuesta"
-                  />
-                  <select
-                    value={partido.estado}
-                    onChange={(e) => actualizarPartido(index, "estado", e.target.value)}
-                    className="w-full border-2 border-gray-300 rounded px-3 py-2"
-                  >
-                    <option value="pendiente">⏳ Pendiente</option>
-                    <option value="acertado">✅ Acertado</option>
-                    <option value="fallado">❌ Fallado</option>
-                  </select>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <div className="font-black text-xl text-yellow-800">{partido.equipo}</div>
-                      <div className="text-xs text-gray-600 font-semibold">{partido.liga}</div>
-                      <div className="text-sm text-gray-700 italic">{partido.descripcion}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="bg-yellow-600 text-white px-3 py-1 rounded-full font-black text-lg">
-                        {partido.cuota}
-                      </div>
-                      <div className={`mt-1 text-lg ${
-                        partido.estado === 'acertado' ? 'text-green-600' :
-                        partido.estado === 'fallado' ? 'text-red-600' :
-                        'text-gray-500'
-                      }`}>
-                        {partido.estado === 'acertado' ? '✅' :
-                         partido.estado === 'fallado' ? '❌' : '⏳'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-3 bg-white rounded-lg p-3 border border-yellow-200">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">📅 {partido.dia}, {partido.fecha}</span>
-                      <span className="text-gray-600">🕐 {partido.hora}</span>
-                    </div>
-                    <div className="mt-2 font-bold text-yellow-700 text-center">
-                      {partido.apuesta}
-                    </div>
-                  </div>
-                </div>
-              )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {personalizada.map((pick: { liga: string; criterio: string }, i: number) => (
+            <div key={i} className="bg-fuchsia-50 rounded-xl p-4 border-2 border-fuchsia-200">
+              <div className="mb-2 font-bold text-fuchsia-700">Pick {i + 1}</div>
+              <select
+                className="w-full mb-2 p-2 rounded border"
+                value={pick.liga}
+                onChange={e => handlePersonalizadaChange(i, "liga", e.target.value)}
+              >
+                <option value="">Elige liga</option>
+                {ligasDisponibles.map((l, idx) => (
+                  <option key={l.id + '-' + idx} value={l.id}>{l.nombre}</option>
+                ))}
+              </select>
+              <select
+                className="w-full p-2 rounded border"
+                value={pick.criterio}
+                onChange={e => handlePersonalizadaChange(i, "criterio", e.target.value)}
+              >
+                <option value="">Elige criterio</option>
+                {criteriosDisponibles.map(c => (
+                  <option key={c.value} value={c.value}>{c.label}</option>
+                ))}
+              </select>
             </div>
           ))}
         </div>
-
-        {/* Botones de Admin */}
-        {isCreator && (
-          <div className="mt-8 flex gap-4 justify-center flex-wrap">
-            {editMode && (
-              <button
-                onClick={async () => {
-                  setSaveStatus(null);
-                  try {
-                    // Ordenar por fecha y hora antes de guardar
-                    const partidosOrdenados = [...partidos].sort((a, b) => {
-                      const convertirFecha = (fecha: string) => {
-                        const partes = fecha.split('/');
-                        if (partes.length === 3) {
-                          return `${partes[2]}-${partes[1].padStart(2, '0')}-${partes[0].padStart(2, '0')}`;
-                        }
-                        return fecha;
-                      };
-                      
-                      const fechaA = new Date(convertirFecha(a.fecha) + 'T' + a.hora.padStart(5, '0'));
-                      const fechaB = new Date(convertirFecha(b.fecha) + 'T' + b.hora.padStart(5, '0'));
-                      return fechaA.getTime() - fechaB.getTime();
-                    });
-                    await setDoc(doc(db, "config", "partidosGanadora"), { partidos: partidosOrdenados });
-                    setPartidos(partidosOrdenados);
-                    setSaveStatus("Guardado correctamente");
-                    setEditMode(false);
-                  } catch (err) {
-                    setSaveStatus("Error al guardar");
-                    console.error("Error al guardar:", err);
-                  }
-                }}
-                className="bg-green-500 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-green-600 transition"
-              >
-                💾 Guardar Cambios
-              </button>
-            )}
-            
-            <button
-              onClick={guardarAlHistorial}
-              className="bg-purple-600 text-white px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-purple-700 transition"
-            >
-              📁 Guardar al Historial
-            </button>
+        <div className="text-center">
+          <button
+            onClick={generarCombinadaPersonalizada}
+            className="bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg hover:from-fuchsia-600 hover:to-pink-700 transition transform hover:scale-105"
+            disabled={loadingPersonalizada}
+          >
+            {loadingPersonalizada ? "Generando..." : "Generar combinada personalizada"}
+          </button>
+        </div>
+        {errorPersonalizada && (
+          <div className="text-center text-red-600 font-bold mt-4">{errorPersonalizada}</div>
+        )}
+        {resultadoPersonalizada && (
+          <div className="mt-6">
+            <h3 className="text-lg font-bold mb-2 text-fuchsia-700">Resultado:</h3>
+            <ul className="space-y-2">
+              {resultadoPersonalizada.picks.map((pick: any, i: number) => (
+                <li key={i} className="bg-fuchsia-100 rounded p-3 border border-fuchsia-300">
+                  <div><span className="font-bold">Liga:</span> {pick.liga}</div>
+                  <div><span className="font-bold">Criterio:</span> {pick.criterio}</div>
+                  <div><span className="font-bold">Equipo:</span> {pick.nombre}</div>
+                  <div><span className="font-bold">Apuesta:</span> {pick.apuesta}</div>
+                  <div><span className="font-bold">Cuota:</span> {pick.cuota?.toFixed ? pick.cuota.toFixed(2) : pick.cuota}</div>
+                  <div><span className="font-bold">Justificación:</span> {pick.justificacion}</div>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-
-        {/* Mensajes de estado */}
-        <div className="mt-4 text-center space-y-2">
-          {saveStatus && (
-            <div className={`font-semibold ${saveStatus.includes("Error") ? "text-red-600" : "text-green-600"}`}>
-              {saveStatus}
-            </div>
-          )}
-          {saveHistorialStatus && (
-            <div className={`font-semibold ${saveHistorialStatus.includes("Error") ? "text-red-600" : "text-green-600"}`}>
-              {saveHistorialStatus}
-            </div>
-          )}
-        </div>
       </div>
+
     </div>
   );
 }
