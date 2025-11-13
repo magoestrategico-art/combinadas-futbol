@@ -515,12 +515,9 @@ export default function HomePage() {
           <span>🏆</span> Ganadora Premium
         </Link>
         {isCreator && (
-          <>
-            <Link href="/admin-codigos" className="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-xs md:text-sm">
-              <span>🔑</span> Códigos Premium
-            </Link>
-            <button className="bg-red-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:bg-red-600 transition text-xs md:text-sm">Limpiar Resultados</button>
-          </>
+          <Link href="/admin-codigos" className="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-xs md:text-sm">
+            <span>🔑</span> Códigos Premium
+          </Link>
         )}
         <Link href="/simulador" className="bg-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition text-xs md:text-sm">Simulador</Link>
       </div>
