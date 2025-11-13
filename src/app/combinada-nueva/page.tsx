@@ -38,11 +38,11 @@ export default function CombinadaNuevaPage() {
   const router = useRouter();
     const [nombreCombinada, setNombreCombinada] = useState<string>("");
     const guardarCombinada = () => {
-      if (!resultado) return;
+      if (!resultado || !nombreCombinada.trim()) return;
       const historial = JSON.parse(localStorage.getItem("historialCombinadas") || "[]");
       const nueva = {
         fecha: new Date().toISOString(),
-        nombre: nombreCombinada || `Combinada ${new Date().toLocaleString()}`,
+        nombre: nombreCombinada.trim(),
         combinada: resultado
       };
       localStorage.setItem("historialCombinadas", JSON.stringify([nueva, ...historial]));
@@ -159,10 +159,14 @@ export default function CombinadaNuevaPage() {
             <div className="text-center mt-6">
               <button
                 onClick={guardarCombinada}
-                className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition"
+                className={`bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition ${!nombreCombinada.trim() ? 'opacity-50 cursor-not-allowed' : ''}`}
+                disabled={!nombreCombinada.trim()}
               >
                 Guardar combinada en historial
               </button>
+              {!nombreCombinada.trim() && (
+                <div className="text-red-600 font-bold mt-2">Debes poner un nombre a la combinada</div>
+              )}
             </div>
           </div>
         )}
