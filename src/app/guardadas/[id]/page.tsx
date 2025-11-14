@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import { db, auth } from "../../../firebase-config";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import SimuladorCombinada from "../../../components/SimuladorCombinada";
 
 export const dynamic = 'force-dynamic';
 
@@ -482,26 +483,34 @@ export default function DetalleCombinada() {
           {/* Estadísticas principales */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div className="bg-blue-50 rounded-lg p-3 text-center border-2 border-blue-200">
+              <div className="text-xs text-gray-500">Jornadas Jugadas</div>
               <div className="text-2xl font-bold text-blue-700">{combinada.estadisticas.totalJornadas}</div>
-              <div className="text-xs text-gray-600 font-semibold">Jornadas Jugadas</div>
             </div>
             <div className="bg-green-50 rounded-lg p-3 text-center border-2 border-green-200">
+              <div className="text-xs text-gray-500">Ganadas</div>
               <div className="text-2xl font-bold text-green-700">{combinada.estadisticas.ganadas}</div>
-              <div className="text-xs text-gray-600 font-semibold">✅ Ganadas</div>
             </div>
             <div className="bg-red-50 rounded-lg p-3 text-center border-2 border-red-200">
+              <div className="text-xs text-gray-500">Perdidas</div>
               <div className="text-2xl font-bold text-red-700">{combinada.estadisticas.perdidas}</div>
-              <div className="text-xs text-gray-600 font-semibold">❌ Perdidas</div>
             </div>
             <div className="bg-purple-50 rounded-lg p-3 text-center border-2 border-purple-200">
+              <div className="text-xs text-gray-500">% Éxito</div>
               <div className="text-2xl font-bold text-purple-700">{combinada.estadisticas.porcentajeExito.toFixed(0)}%</div>
-              <div className="text-xs text-gray-600 font-semibold">% Éxito</div>
             </div>
             <div className="bg-orange-50 rounded-lg p-3 text-center border-2 border-orange-200">
-              <div className="text-2xl font-bold text-orange-700">{combinada.estadisticas.mejorRacha} 🔥</div>
-              <div className="text-xs text-gray-600 font-semibold">Mejor Racha</div>
+              <div className="text-xs text-gray-500">Mejor Racha</div>
+              <div className="text-2xl font-bold text-orange-700">{combinada.estadisticas.mejorRacha}</div>
             </div>
           </div>
+
+          {/* Simulador integrado */}
+          <SimuladorCombinada
+            partidos={combinada.equipos.length}
+            resultados={Object.values(combinada.resultadosPorJornada || {}).map(j => j.estadoGeneral === "GANADA" ? "acierto" : "fallo")}
+            cuota={parseFloat((combinada.partidos ? combinada.partidos.reduce((acc, p) => acc * (parseFloat(p.cuota) || 1), 1) : Math.pow(1.8, combinada.equipos.length)).toFixed(2))}
+            objetivo={10}
+          />
         </div>
 
         {/* Timeline de jornadas */}
