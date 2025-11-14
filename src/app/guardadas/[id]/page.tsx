@@ -5,6 +5,7 @@ import { db, auth } from "../../../firebase-config";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import SimuladorCombinada from "../../../components/SimuladorCombinada";
+import SimuladorCombinadaFull from "../../../components/SimuladorCombinadaFull";
 
 export const dynamic = 'force-dynamic';
 
@@ -452,13 +453,8 @@ export default function DetalleCombinada() {
     );
   }
 
-  const jornadasArray = Object.values(combinada.resultadosPorJornada || {}) as ResultadoJornada[];
-
-  // Preparar datos para el simulador
   const partidosSim = combinada.partidos ? combinada.partidos.length : combinada.equipos.length;
-  const resultadosSim = jornadasArray.map(j => j.estadoGeneral === "GANADA" ? "acierto" : "fallo");
   const cuotaSim = combinada.partidos ? combinada.partidos.reduce((acc, p) => acc * (parseFloat(p.cuota) || 1), 1) : Math.pow(1.8, partidosSim);
-  const objetivoSim = 10;
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-[#204080] via-[#1e3a75] to-[#1b3366] py-6 px-4">
@@ -511,12 +507,11 @@ export default function DetalleCombinada() {
           </div>
         </div>
 
-        {/* Simulador integrado */}
-        <SimuladorCombinada
+        {/* Simulador con lógica y diseño principal */}
+        <SimuladorCombinadaFull
           partidos={partidosSim}
-          resultados={resultadosSim}
           cuota={cuotaSim}
-          objetivo={objetivoSim}
+          objetivo={10}
         />
 
         {/* Timeline de jornadas */}
@@ -528,7 +523,7 @@ export default function DetalleCombinada() {
             </div>
           )}
           <div className="flex flex-wrap gap-3">
-            {jornadasArray.sort((a, b) => a.jornada - b.jornada).map((j) => {
+            {Object.values(combinada.resultadosPorJornada || {}).sort((a, b) => a.jornada - b.jornada).map((j) => {
               const icon = j.estadoGeneral === "GANADA" ? "✅" : j.estadoGeneral === "PERDIDA" ? "❌" : "⏳";
               const bgColor = j.estadoGeneral === "GANADA" ? "bg-green-100 border-green-400" : 
                               j.estadoGeneral === "PERDIDA" ? "bg-red-100 border-red-400" : 
