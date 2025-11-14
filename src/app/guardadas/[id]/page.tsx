@@ -60,6 +60,8 @@ export default function DetalleCombinada() {
   const [partidosTemp, setPartidosTemp] = useState<Array<{equipo: string; apuesta: string; cuota: string; liga: string}>>([]);
   const [tituloPartidos, setTituloPartidos] = useState("⚽ Equipos y Pronósticos de esta Combinada");
   const [cuotaManual, setCuotaManual] = useState("1.00");
+  const cuotaInicial = (combinada?.partidos ? combinada.partidos.reduce((acc, p) => acc * (parseFloat(p.cuota) || 1), 1) : Math.pow(1.8, combinada?.equipos?.length || 0)).toFixed(2);
+  const [cuotaAproximada, setCuotaAproximada] = useState(cuotaInicial);
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
@@ -472,8 +474,7 @@ export default function DetalleCombinada() {
               <h1 className="text-3xl font-extrabold text-blue-900">{combinada.nombre}</h1>
               <p className="text-gray-600 mt-1">
                 📅 {combinada.temporada} • Creada en Jornada {combinada.jornadaCreacion} • ⚽ {combinada.equipos.length} equipos
-                <span className="ml-2">| Cuota aproximada: <span className="font-bold text-fuchsia-700">{(combinada.partidos ? combinada.partidos.reduce((acc, p) => acc * (parseFloat(p.cuota) || 1), 1) : Math.pow(1.8, combinada.equipos.length)).toFixed(2)}</span></span>
-                <span className="ml-2">| Cuota manual: <input type="number" step="0.01" min="1" value={cuotaManual} onChange={e => setCuotaManual(e.target.value)} className="border rounded px-2 py-1 w-24 text-center font-bold text-fuchsia-700" /></span>
+                <span className="ml-2">| Cuota aproximada: <input type="number" step="0.01" min="1" value={cuotaAproximada} onChange={e => setCuotaAproximada(e.target.value)} className="border rounded px-2 py-1 w-24 text-center font-bold text-fuchsia-700" /></span>
               </p>
             </div>
           </div>
