@@ -478,6 +478,15 @@ export default function DetalleCombinada() {
                 📅 {combinada.temporada} • Creada en Jornada {combinada.jornadaCreacion} • ⚽ {combinada.equipos.length} equipos
                 <span className="ml-2">| Cuota aproximada: <input type="number" step="0.01" min="1" value={cuotaAproximada} onChange={e => setCuotaAproximada(e.target.value)} className="border rounded px-2 py-1 w-24 text-center font-bold text-fuchsia-700" /></span>
               </p>
+              <a
+                href="/simulador"
+                className="mt-2 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-lg"
+                style={{ textAlign: 'center', textDecoration: 'none' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                🧮 Ir al Simulador
+              </a>
             </div>
           </div>
 
