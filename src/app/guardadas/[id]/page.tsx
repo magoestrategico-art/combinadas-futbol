@@ -832,6 +832,16 @@ export default function DetalleCombinada() {
             >
               🗑️ Eliminar Combinada Completa
             </button>
+              {/* Enlace al simulador */}
+              <a
+                href="/simulador"
+                className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition shadow-lg"
+                style={{ textAlign: 'center', textDecoration: 'none' }}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ir al simulador
+              </a>
           </div>
         )}
       </div>
