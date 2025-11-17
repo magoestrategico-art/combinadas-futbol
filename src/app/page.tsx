@@ -514,7 +514,7 @@ export default function HomePage() {
           <span>📁</span> Historial
         </Link>
         <Link href="/ganadora" className="bg-orange-400 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-orange-500 transition text-xs md:text-sm">
-          <span>🏆</span> Ganadora Premium
+          <span>🏆</span> Genera Combinada
         </Link>
         {isCreator && (
           <Link href="/admin-codigos" className="bg-purple-600 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow hover:bg-purple-700 transition text-xs md:text-sm">
