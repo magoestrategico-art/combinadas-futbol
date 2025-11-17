@@ -4,7 +4,6 @@ import { useRouter, useParams } from "next/navigation";
 import { db, auth } from "../../../firebase-config";
 import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
-import SimuladorCombinada from "../../../components/SimuladorCombinada";
 import SimuladorCombinadaFull from "../../../components/SimuladorCombinadaFull";
 
 export const dynamic = 'force-dynamic';
@@ -506,13 +505,6 @@ export default function DetalleCombinada() {
             </div>
           </div>
         </div>
-
-        {/* Simulador con lógica y diseño principal */}
-        <SimuladorCombinadaFull
-          partidos={partidosSim}
-          cuota={cuotaSim}
-          objetivo={10}
-        />
 
         {/* Timeline de jornadas */}
         <div className="bg-white rounded-xl shadow-xl p-6 mb-4">
