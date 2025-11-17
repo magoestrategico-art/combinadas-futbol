@@ -25,7 +25,7 @@ export default function RegisterPage() {
       setPendingVerification(true);
       setSuccess(true);
       setTimeout(() => {
-        router.push("/login");
+        router.push("/");
       }, 4000);
     } catch (err: any) {
       setError(err.message);
