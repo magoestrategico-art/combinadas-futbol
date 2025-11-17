@@ -49,7 +49,7 @@ interface CombinadaGuardada {
   estadisticas: EstadisticasGlobales;
 }
 
-export default function GuardadasPage() {
+export default function GuardadasPage({ origen }: { origen?: string }) {
   // Versión 2.0 - Grid con navegación a detalle
   const CREATOR_UID = "hDkn8W38nVZKQD1piviUrmwvHtt2";
   const [isCreator, setIsCreator] = useState(false);
@@ -63,19 +63,26 @@ export default function GuardadasPage() {
   const [verificandoPremium, setVerificandoPremium] = useState(true);
   const router = useRouter();
 
+  const [user, setUser] = useState<any>(null);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
       setIsCreator(user?.uid === CREATOR_UID);
-      
-      if (user) {
-        await verificarAccesoPremium(user.uid);
+      if (origen === "mis-combinadas") {
+        if (user) {
+          cargarCombinadasUsuario(user.uid);
+        }
       } else {
-        setVerificandoPremium(false);
-        router.push("/premium");
+        if (user) {
+          await verificarAccesoPremium(user.uid);
+        } else {
+          setVerificandoPremium(false);
+          router.push("/premium");
+        }
       }
     });
     return () => unsubscribe();
-  }, []);
+  }, [origen]);
 
   const verificarAccesoPremium = async (userId: string) => {
     try {
@@ -113,8 +120,8 @@ export default function GuardadasPage() {
   };
 
   useEffect(() => {
-    cargarCombinadas();
-  }, []);
+    if (!origen) cargarCombinadas();
+  }, [origen]);
 
   const cargarCombinadas = async () => {
     try {
@@ -127,6 +134,23 @@ export default function GuardadasPage() {
       setCombinadas(data);
     } catch (error) {
       console.error("Error al cargar combinadas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Nueva función para cargar solo las combinadas del usuario logueado
+  const cargarCombinadasUsuario = async (uid: string) => {
+    try {
+      const q = query(collection(db, "combinadas"), where("usuarioId", "==", uid));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCombinadas(data);
+    } catch (error) {
+      console.error("Error al cargar combinadas del usuario:", error);
     } finally {
       setLoading(false);
     }

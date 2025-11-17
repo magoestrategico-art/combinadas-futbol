@@ -385,7 +385,7 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
-      {isCreator && (
+      {loggedIn && (
         <div className="w-full flex justify-center mt-4 mb-6">
           <Link href="/combinada-nueva">
             <button className="bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-lg transition">

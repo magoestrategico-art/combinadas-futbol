@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "../../firebase-config";
 import { useRouter } from "next/navigation";
 import { db } from "../../firebase-config";
 import { addDoc, collection } from "firebase/firestore";
@@ -38,38 +39,34 @@ const criterios = [
 
 export default function CombinadaNuevaPage() {
   const router = useRouter();
-    const [nombreCombinada, setNombreCombinada] = useState<string>("");
-    const guardarCombinada = async () => {
-      if (!resultado || !nombreCombinada.trim()) return;
-      try {
-        // Extraer equipos y temporada de los picks
-        const equipos = resultado.map(r => r.nombre);
-        const temporada = "2025-2026"; // Puedes automatizarlo si lo necesitas
-        await addDoc(collection(db, "historialCombinadas"), {
-          fechaCreacion: new Date().toISOString(),
-          nombre: nombreCombinada.trim(),
-          tipo: "personalizada",
-          jornadaCreacion: 1,
-          temporada,
-          equipos,
-          resultadosPorJornada: {},
-          estadisticas: {
-            totalJornadas: 0,
-            ganadas: 0,
-            perdidas: 0,
-            pendientes: 0,
-            porcentajeExito: 0,
-            rachaActual: 0,
-            mejorRacha: 0
-          },
-          combinada: resultado
-        });
-        router.push("/guardadas");
-      } catch (error) {
-        alert("Error al guardar la combinada en Firebase");
-        console.error(error);
-      }
-    };
+  const [user, setUser] = useState<any>(null);
+  const [nombreCombinada, setNombreCombinada] = useState<string>("");
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      setUser(u);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const guardarCombinada = async () => {
+    if (!resultado || !nombreCombinada.trim() || !user) return;
+    try {
+      const equipos = resultado.map(r => r.nombre);
+      await addDoc(collection(db, "combinadas"), {
+        nombre: nombreCombinada.trim(),
+        cuota: "", // Puedes calcular la cuota total si lo deseas
+        partidos: equipos.map(nombre => ({ nombre, estado: "pendiente" })),
+        usuarioId: user.uid,
+        fecha: new Date().toLocaleString(),
+        personalizada: true,
+        picks: resultado
+      });
+      router.push("/combinadas");
+    } catch (error) {
+      alert("Error al guardar la combinada en Firebase");
+      console.error(error);
+    }
+  };
   const [picks, setPicks] = useState<Pick[]>([
     { liga: "", criterio: "" },
     { liga: "", criterio: "" },
