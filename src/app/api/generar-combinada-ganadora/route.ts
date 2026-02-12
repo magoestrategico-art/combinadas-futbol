@@ -1,0 +1,3 @@
+
+// Endpoint deshabilitado
+export {};
