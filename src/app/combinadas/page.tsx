@@ -1,212 +1,114 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { db, auth } from "../../firebase-config";
-import { collection, addDoc, getDocs, query, where } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
 
-// Página de Combinadas con estados de partidos
-export default function CombinadasPage() {
-  const [combinadas, setCombinadas] = useState<any[]>([]);
-  const [nombre, setNombre] = useState("");
-  const [cuota, setCuota] = useState("");
-  const [equipos, setEquipos] = useState<string>("");
-  const [user, setUser] = useState<any>(null);
-  const router = useRouter();
+import Head from "next/head";
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      if (u) cargarCombinadas(u.uid);
-    });
-  }, []);
-
-  const cargarCombinadas = async (uid: string) => {
-    const q = query(collection(db, "combinadas"), where("usuarioId", "==", uid));
-    const snapshot = await getDocs(q);
-    const combinadasData = snapshot.docs.map(doc => {
-      const data = doc.data();
-      // Validar si el campo 'partidos' existe, si no, inicializarlo
-      if (!data.partidos) {
-        data.partidos = [];
-      }
-      return { id: doc.id, ...data };
-    });
-    setCombinadas(combinadasData);
-  };
-
-  const crearCombinada = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) return alert("Debes iniciar sesión");
-    const equiposArray = equipos
-      .split(",")
-      .map(e => e.trim()) // Eliminar espacios adicionales
-      .filter(e => e); // Filtrar elementos vacíos
-
-    const partidosConEstado = equiposArray.map(equipo => ({
-      nombre: equipo,
-      estado: "pendiente" // pendiente, acertado, fallado
-    }));
-    await addDoc(collection(db, "combinadas"), {
-      nombre,
-      cuota,
-      partidos: partidosConEstado,
-      usuarioId: user.uid,
-      fecha: new Date().toLocaleString()
-    });
-    setNombre("");
-    setCuota("");
-    setEquipos("");
-    cargarCombinadas(user.uid);
-  };
-
-  const cambiarEstadoPartido = async (combinadaId: string, indexPartido: number, nuevoEstado: string) => {
-    const combinada = combinadas.find(c => c.id === combinadaId);
-    if (!combinada) return;
-    
-    // Manejar formato antiguo y nuevo
-    let partidosActualizados;
-    if (combinada.partidos) {
-      partidosActualizados = [...combinada.partidos];
-    } else if (combinada.equipos) {
-      // Convertir formato antiguo a nuevo
-      const equiposArray = Array.isArray(combinada.equipos) ? combinada.equipos : combinada.equipos.split(",").map((e: string) => e.trim());
-      partidosActualizados = equiposArray.map((equipo: string) => ({
-        nombre: equipo,
-        estado: "pendiente"
-      }));
-    } else {
-      return;
-    }
-    
-    partidosActualizados[indexPartido].estado = nuevoEstado;
-    
-    // Actualizar en Firebase
-    const { doc, updateDoc } = await import("firebase/firestore");
-    const combinadaRef = doc(db, "combinadas", combinadaId);
-    await updateDoc(combinadaRef, { partidos: partidosActualizados });
-    
-    // Recargar combinadas
-    cargarCombinadas(user.uid);
-  };
-
+export default function GuiaYTutorialPage() {
   return (
-  <div className="min-h-screen flex flex-col items-center justify-start" style={{ background: '#23407a', minHeight: '100vh', padding: '48px 0 56px 0', boxSizing: 'border-box' }}>
-      {/* Botón volver a la página principal */}
-      <div className="w-full flex justify-start mb-6">
+    <>
+      <Head>
+        <title>Guía y Tutorial</title>
+      </Head>
+      <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-gray-100 to-gray-300 py-10">
+        <h1 className="text-4xl font-bold text-gray-800 mb-6">Guía y Tutorial: Cómo usar la plataforma</h1>
+        <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-4xl border-2 border-gray-400">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Introducción</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Bienvenido a nuestra plataforma de combinadas de fútbol. Aquí te explicaremos cómo puedes crear, gestionar y disfrutar de tus propias combinadas de manera sencilla.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Paso 1: Registro e inicio de sesión</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Para comenzar, regístrate en nuestra plataforma o inicia sesión si ya tienes una cuenta. Esto te permitirá guardar tus combinadas y acceder a ellas en cualquier momento.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Paso 2: Crear una nueva combinada</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Dirígete a la sección "Crear nueva combinada". Allí podrás:
+          </p>
+          <ul className="list-disc list-inside text-gray-700 mb-6">
+            <li>Escribir un nombre para tu combinada.</li>
+            <li>Definir la cuota de la combinada.</li>
+            <li>Seleccionar los equipos y criterios que formarán parte de la combinada.</li>
+          </ul>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Paso 3: Guardar y gestionar tus combinadas</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Una vez que hayas creado tu combinada, guárdala para poder consultarla más tarde en la sección "Mis Combinadas". Desde allí, podrás:
+          </p>
+          <ul className="list-disc list-inside text-gray-700 mb-6">
+            <li>Editar el nombre o los equipos de una combinada.</li>
+            <li>Eliminar combinadas que ya no necesites.</li>
+            <li>Consultar estadísticas de tus combinadas, como el porcentaje de éxito y las rachas ganadoras.</li>
+          </ul>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Ejemplo práctico</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Imagina que quieres crear una combinada para la jornada actual de La Liga. Selecciona los equipos y criterios que prefieras, asigna un nombre como "Mi Combinada de La Liga" y guarda tu selección. Luego, podrás ver los resultados en la sección de "Mis Combinadas".
+          </p>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Consejos y trucos</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            - Experimenta con diferentes criterios para encontrar las combinadas más exitosas.
+            - Consulta las estadísticas de tus combinadas para mejorar tus estrategias.
+            - Comparte tus combinadas con amigos y compite para ver quién tiene la mejor racha.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Estado de las combinadas</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Equipos y Pronósticos de esta Combinada</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+              <h3 className="text-xl font-bold">R.Madrid</h3>
+              <p>Liga: 1 DIVISION ESPAÑA</p>
+              <p>Apuesta: Ganador</p>
+              <p>Criterio: No definido</p>
+              <p>Cuota:</p>
+              <p className="font-semibold">Estado: <span className="text-green-600">Acertada</span></p>
+            </div>
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+              <h3 className="text-xl font-bold">Manchester Utd</h3>
+              <p>Liga: Premier League</p>
+              <p>Apuesta: +1,5 GOLES</p>
+              <p>Criterio: No definido</p>
+              <p>Cuota:</p>
+              <p className="font-semibold">Estado: <span className="text-red-600">Fallada</span></p>
+            </div>
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+              <h3 className="text-xl font-bold">Verona</h3>
+              <p>Liga: Serie A</p>
+              <p>Apuesta: Pierde</p>
+              <p>Criterio: No definido</p>
+              <p>Cuota:</p>
+              <p className="font-semibold">Estado: <span className="text-gray-600">Pendiente</span></p>
+            </div>
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+              <h3 className="text-xl font-bold">Borussia Dortmund</h3>
+              <p>Liga: Bundesliga</p>
+              <p>Apuesta: -3,5 GOLES</p>
+              <p>Criterio: No definido</p>
+              <p>Cuota:</p>
+              <p className="font-semibold">Estado: <span className="text-gray-600">Pendiente</span></p>
+            </div>
+            <div className="bg-yellow-100 border-2 border-yellow-400 rounded-lg p-4">
+              <h3 className="text-xl font-bold">Angers</h3>
+              <p>Liga: Ligue 1</p>
+              <p>Apuesta: -3,5 GOLES</p>
+              <p>Criterio: No definido</p>
+              <p>Cuota:</p>
+              <p className="font-semibold">Estado: <span className="text-gray-600">Pendiente</span></p>
+            </div>
+          </div>
+
+          <p className="text-lg text-gray-700">
+            ¡Esperamos que disfrutes usando nuestra plataforma y que tengas mucho éxito con tus combinadas!
+          </p>
+        </div>
         <button
-          onClick={() => router.push("/")}
-          className="bg-blue-700 text-white rounded-full px-6 py-2 font-semibold shadow hover:bg-blue-800 transition focus:outline-none focus:ring-2 focus:ring-blue-400"
-          aria-label="Volver a la página principal"
+          onClick={() => { window.location.href = '/' }}
+          className="mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:bg-blue-700 transition"
         >
           Volver a la página principal
         </button>
       </div>
-      <h1 className="text-5xl font-extrabold mb-6 text-white drop-shadow-lg tracking-tight" style={{textShadow:'0 4px 16px #2a5298'}}>Mis Combinadas</h1>
-      <p className="text-lg text-blue-100 mb-8 font-semibold">Aquí puedes crear y gestionar tus propias combinadas de fútbol</p>
-      <div className="w-full max-w-2xl">
-        {user ? (
-          <form onSubmit={crearCombinada} className="bg-white/95 p-8 rounded-2xl shadow-2xl mb-8 border border-blue-300">
-            <h2 className="text-2xl font-bold mb-6 text-blue-700">Crear nueva combinada</h2>
-            <input
-              type="text"
-              placeholder="Nombre"
-              value={nombre}
-              onChange={e => setNombre(e.target.value)}
-              className="w-full mb-4 p-3 border-2 border-blue-200 rounded-lg bg-blue-50 text-lg focus:outline-none focus:border-blue-400 transition"
-              required
-            />
-            <input
-              type="number"
-              placeholder="Cuota"
-              value={cuota}
-              onChange={e => setCuota(e.target.value)}
-              className="w-full mb-4 p-3 border-2 border-blue-200 rounded-lg bg-blue-50 text-lg focus:outline-none focus:border-blue-400 transition"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Equipos (separados por coma)"
-              value={equipos}
-              onChange={e => setEquipos(e.target.value)}
-              className="w-full mb-4 p-3 border-2 border-blue-200 rounded-lg bg-blue-50 text-lg focus:outline-none focus:border-blue-400 transition"
-              required
-            />
-            <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-blue-400 text-white py-3 rounded-lg font-bold text-lg shadow hover:from-blue-700 hover:to-blue-500 transition">Crear Combinada</button>
-          </form>
-        ) : (
-          <div className="bg-yellow-100 text-yellow-800 p-4 rounded mb-8 text-center font-semibold">Inicia sesión para crear y ver tus combinadas.</div>
-        )}
-        <div>
-          {combinadas.length === 0 ? (
-            <div className="text-blue-100 text-center font-semibold">No tienes combinadas guardadas.</div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {combinadas.map(comb => (
-                <div key={comb.id} className="bg-white/90 p-6 rounded-xl shadow-lg border border-blue-200 flex flex-col gap-2">
-                  <div className="font-bold text-2xl text-blue-800 mb-2">{comb.nombre}</div>
-                  <div className="text-lg">Cuota: <span className="font-semibold text-blue-600">{comb.cuota}</span></div>
-                  <div className="text-base font-semibold text-gray-700 mb-2">Partidos:</div>
-                  <div className="flex flex-col gap-2">
-                    {(() => {
-                      // Compatibilidad con formato antiguo
-                      const partidos = comb.partidos && comb.partidos.length > 0
-                        ? comb.partidos
-                        : (comb.equipos ? 
-                          (Array.isArray(comb.equipos) ? comb.equipos : comb.equipos.split(","))
-                          .map((e: string) => ({ nombre: typeof e === "string" ? e.trim() : e, estado: "pendiente" })) 
-                          : []);
-                      
-                      console.log("DEBUG comb.equipos:", comb.equipos);
-                      console.log("DEBUG comb.partidos:", comb.partidos);
-                      console.log("DEBUG partidos procesados:", partidos);
-                      
-                      return partidos.map((partido: any, index: number) => {
-                        const bgColor = partido.estado === "acertado" ? "bg-green-100" : 
-                                       partido.estado === "fallado" ? "bg-red-100" : 
-                                       "bg-blue-50";
-                        const borderColor = partido.estado === "acertado" ? "border-green-600" : 
-                                           partido.estado === "fallado" ? "border-red-600" : 
-                                           "border-blue-300";
-                        const textColor = partido.estado === "acertado" ? "text-green-900" : 
-                                         partido.estado === "fallado" ? "text-red-900" : 
-                                         "text-blue-900";
-                        
-                        return (
-                          <div key={index} className={`p-4 rounded-2xl border-[3px] ${bgColor} ${borderColor} ${textColor} flex justify-between items-center shadow-sm`}>
-                            <span className="font-semibold text-lg">{partido.nombre}</span>
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => cambiarEstadoPartido(comb.id, index, "acertado")}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition ${partido.estado === "acertado" ? "bg-green-600 text-white" : "bg-white text-green-700 border-2 border-green-600 hover:bg-green-50"}`}
-                              >
-                                ✓ Acertado
-                              </button>
-                              <button
-                                onClick={() => cambiarEstadoPartido(comb.id, index, "fallado")}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold transition ${partido.estado === "fallado" ? "bg-red-600 text-white" : "bg-white text-red-700 border-2 border-red-600 hover:bg-red-50"}`}
-                              >
-                                ✗ Fallado
-                              </button>
-                              <button
-                                onClick={() => cambiarEstadoPartido(comb.id, index, "pendiente")}
-                                className={`px-3 py-2 rounded-lg text-sm font-bold transition ${partido.estado === "pendiente" ? "bg-gray-600 text-white" : "bg-white text-gray-700 border-2 border-gray-400 hover:bg-gray-50"}`}
-                              >
-                                ⟳
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      });
-                    })()}
-                  </div>
-                  <div className="text-xs text-gray-500 mt-2">Creada: {comb.fecha}</div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    </>
   );
 }

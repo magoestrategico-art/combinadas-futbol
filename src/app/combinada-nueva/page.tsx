@@ -33,6 +33,10 @@ const criterios = [
   { label: "Ganador", value: "GANADOR" },
   { label: "Perdedor", value: "PERDEDOR" },
   { label: "Empate", value: "EMPATE" },
+  { label: "2 a 3 goles", value: "TWO_TO_THREE_GOALS" },
+  { label: "Más de 3,5 goles", value: "OVER_3_5" },
+  { label: "Menos de 1,5 goles", value: "UNDER_1_5" }, // Criterio existente
+  { label: "Ambos equipos marcan", value: "BOTH_TEAMS_SCORE" }, // Nuevo criterio
 ];
 
 
@@ -75,6 +79,11 @@ export default function CombinadaNuevaPage() {
     { liga: "", criterio: "" },
     { liga: "", criterio: "" },
     { liga: "", criterio: "" },
+    { liga: "", criterio: "" }, 
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },
+    { liga: "", criterio: "" },                                                                                                                                                                             
+    { liga: "", criterio: "" },
     { liga: "", criterio: "" },
   ]);
   const [resultado, setResultado] = useState<Resultado[] | null>(null);
@@ -110,6 +119,15 @@ export default function CombinadaNuevaPage() {
     }
   };
 
+  const agregarPick = () => {
+    setPicks([...picks, { liga: "", criterio: "" }]);
+  };
+
+  const eliminarPick = (index: number) => {
+    const nueva = picks.filter((_, i) => i !== index);
+    setPicks(nueva);
+  };
+
   console.log("resultado:", resultado);
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-yellow-300 to-pink-200 py-10">
@@ -119,29 +137,35 @@ export default function CombinadaNuevaPage() {
       <h1 className="text-3xl font-bold mb-6 text-fuchsia-700">Combinada Personalizada (NUEVA)</h1>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl border-2 border-fuchsia-400 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {picks.map((pick: Pick, i: number) => (
+          {picks.map((pick, i) => (
             <div key={i} className="bg-fuchsia-50 rounded-xl p-4 border border-fuchsia-200">
               <div className="mb-2 font-bold text-fuchsia-700">Pick {i + 1}</div>
               <select
                 className="w-full mb-2 p-2 rounded border"
                 value={pick.liga}
-                onChange={e => handleChange(i, "liga", e.target.value)}
+                onChange={(e) => handleChange(i, "liga", e.target.value)}
               >
                 <option value="">Elige liga</option>
-                {ligas.map(l => (
+                {ligas.map((l) => (
                   <option key={`liga-${i}-${l.id}`} value={l.id}>{l.nombre}</option>
                 ))}
               </select>
               <select
                 className="w-full p-2 rounded border"
                 value={pick.criterio}
-                onChange={e => handleChange(i, "criterio", e.target.value)}
+                onChange={(e) => handleChange(i, "criterio", e.target.value)}
               >
                 <option value="">Elige criterio</option>
-                {criterios.map(c => (
+                {criterios.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
                 ))}
               </select>
+              <button
+                onClick={() => eliminarPick(i)}
+                className="mt-2 text-red-600 hover:underline"
+              >
+                Eliminar
+              </button>
             </div>
           ))}
         </div>
@@ -172,6 +196,12 @@ export default function CombinadaNuevaPage() {
             </>
           )}
         </div>
+        <button
+          onClick={agregarPick}
+          className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+        >
+          Añadir Pick
+        </button>
         {error && (
           <div className="text-center text-red-600 font-bold mt-4">{error}</div>
         )}

@@ -60,6 +60,29 @@ export async function generarCombinadaPersonalizada(picks: { liga: string; crite
       seleccionado = equipos.sort((a: any, b: any) => b.draw - a.draw)[0];
       apuesta = 'Empate';
       justificacion = seleccionado ? `Ha empatado ${seleccionado.draw} de ${seleccionado.playedGames} partidos.` : '';
+    } else if (pick.criterio === 'TWO_TO_THREE_GOALS') {
+      seleccionado = equipos
+        .map((e: any) => ({ ...e, promedioGoles: calcularPromedioGolesTotales(e) }))
+        .find((e: any) => e.promedioGoles >= 2 && e.promedioGoles <= 3);
+      apuesta = '2 a 3 goles';
+      justificacion = seleccionado ? `Promedio de ${seleccionado.promedioGoles?.toFixed?.(2) ?? '-'} goles por partido.` : '';
+    } else if (pick.criterio === 'OVER_3_5') {
+      seleccionado = equipos
+        .map((e: any) => ({ ...e, promedioGoles: calcularPromedioGolesTotales(e) }))
+        .sort((a: any, b: any) => b.promedioGoles - a.promedioGoles)[0];
+      apuesta = 'Más de 3.5 goles';
+      justificacion = seleccionado ? `Promedio de ${seleccionado.promedioGoles?.toFixed?.(2) ?? '-'} goles por partido.` : '';
+    } else if (pick.criterio === 'UNDER_1_5') {
+      seleccionado = equipos
+        .map((e: any) => ({ ...e, promedioGoles: calcularPromedioGolesTotales(e) }))
+        .sort((a: any, b: any) => a.promedioGoles - b.promedioGoles)[0];
+      apuesta = 'Menos de 1.5 goles';
+      justificacion = seleccionado ? `Promedio de ${seleccionado.promedioGoles?.toFixed?.(2) ?? '-'} goles por partido.` : '';
+    } else if (pick.criterio === 'BOTH_TEAMS_SCORE') {
+      seleccionado = equipos
+        .sort((a: any, b: any) => b.bothTeamsScore - a.bothTeamsScore)[0];
+      apuesta = 'Ambos equipos marcan';
+      justificacion = seleccionado ? `Probabilidad de ambos equipos marcan: ${(seleccionado.bothTeamsScore * 100)?.toFixed?.(2) ?? '-'}%.` : '';
     }
     console.log('DEBUG pick:', pick, 'seleccionado:', seleccionado);
     if (seleccionado) {
@@ -78,5 +101,8 @@ export async function generarCombinadaPersonalizada(picks: { liga: string; crite
 }
 
 export function calcularCuotaTotalGanadora(picks: EquipoSeleccionado[]): number {
-  return picks.reduce((total, pick) => total * pick.cuota, 1);
+  return picks.reduce((total, pick) => {
+    const cuota = pick.cuota && !isNaN(pick.cuota) ? pick.cuota : 1; // Validar cuota
+    return total * cuota;
+  }, 1);
 }

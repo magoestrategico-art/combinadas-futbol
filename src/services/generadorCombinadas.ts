@@ -162,5 +162,8 @@ export async function generarCombinadaSelect(): Promise<PartidoSeleccionado[]> {
  * Calcular cuota total de la combinada
  */
 export function calcularCuotaTotal(picks: PartidoSeleccionado[]): number {
-  return picks.reduce((total, pick) => total * pick.cuota, 1);
+  return picks.reduce((total, pick) => {
+    const cuota = pick.cuota && !isNaN(pick.cuota) ? pick.cuota : 1; // Validar cuota
+    return total * cuota;
+  }, 1);
 }

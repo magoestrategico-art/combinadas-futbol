@@ -41,6 +41,7 @@ export default function CombinadaPersonalizadaPage() {
     { liga: "", criterio: "" },
     { liga: "", criterio: "" },
     { liga: "", criterio: "" },
+    { liga: "", criterio: "" }, // Añadido un pick más
   ]);
   const [resultado, setResultado] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -109,10 +110,10 @@ export default function CombinadaPersonalizadaPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-yellow-300 to-pink-200 py-10">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-yellow-300 to-pink-200 py-10 overflow-y-auto">
       <h1 className="text-3xl font-bold mb-6 text-fuchsia-700">Combinada Personalizada</h1>
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-2xl border-2 border-fuchsia-400 mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 overflow-y-auto max-h-[700px]">
           {picks.map((pick, i) => (
             <div key={i} className="bg-fuchsia-50 rounded-xl p-4 border border-fuchsia-200">
               <div className="mb-2 font-bold text-fuchsia-700">Pick {i + 1}</div>

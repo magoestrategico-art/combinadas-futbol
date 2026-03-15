@@ -615,149 +615,63 @@ export default function DetalleCombinada() {
           </div>
         </div>
 
-        {/* Equipos y Pronósticos */}
-        <div className="bg-white rounded-xl shadow-xl p-6 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800 flex-1">
-              {editandoPartidos ? (
-                <input
-                  type="text"
-                  value={tituloPartidos}
-                  onChange={(e) => setTituloPartidos(e.target.value)}
-                  className="border-2 border-blue-300 rounded px-3 py-1 text-xl font-bold text-gray-800 w-full max-w-2xl"
-                  placeholder="Título de la sección"
-                />
-              ) : (
-                <div>
-                  {tituloPartidos}
-                  {isCreator && jornadaActiva && (
-                    <span className="ml-3 text-sm bg-blue-500 text-white px-3 py-1 rounded-full font-bold">
-                      ⚡ Jornada {jornadaActiva} Activa
-                    </span>
-                  )}
-                </div>
-              )}
-            </h2>
-            {isCreator && !editandoPartidos && (
-              <button
-                onClick={() => {
-                  setEditandoPartidos(true);
-                  setPartidosTemp(combinada.partidos || combinada.equipos.map(e => ({
-                    equipo: e,
-                    apuesta: "Apuesta por definir", // Ajuste para mostrar un texto más claro
-                    cuota: "1.80",
-                    liga: "Liga por definir"
-                  })));
-                }}
-                className="bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition"
+        {/* Equipos y Pronósticos con botones de estado */}
+        <div className="bg-white rounded-xl shadow-2xl p-6 mb-4">
+          <h2 className="text-2xl font-bold text-blue-900 mb-4">{tituloPartidos}</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {combinada.partidos?.map((partido, index) => (
+              <div
+                key={index}
+                className={`p-3 rounded-lg border-2 shadow-md ${
+                  partido.estado === "acertado"
+                    ? "bg-green-50 border-green-400"
+                    : partido.estado === "fallado"
+                    ? "bg-red-50 border-red-400"
+                    : "bg-yellow-50 border-yellow-400"
+                }`}
               >
-                ✏️ Editar
-              </button>
-            )}
+                <h3 className="text-sm font-bold text-gray-800">{partido.equipo}</h3>
+                <p className="text-xs text-gray-600">Liga: {partido.liga}</p>
+                <p className="text-xs text-gray-600">Apuesta: {partido.apuesta}</p>
+                <p className="text-xs text-gray-600">Criterio: {partido.justificacion || "No definido"}</p>
+                <p className="text-xs text-gray-600">Cuota: {partido.cuota}</p>
+                <p className="text-xs font-semibold">
+                  Estado: {" "}
+                  <span
+                    className={
+                      partido.estado === "acertado"
+                        ? "text-green-600"
+                        : partido.estado === "fallado"
+                        ? "text-red-600"
+                        : "text-gray-600"
+                    }
+                  >
+                    {partido.estado ? partido.estado.charAt(0).toUpperCase() + partido.estado.slice(1) : "Pendiente"}
+                  </span>
+                </p>
+                <div className="flex gap-1 mt-1">
+                  <button
+                    onClick={() => cambiarEstadoPartido(index, "acertado")}
+                    className="bg-green-500 text-white px-1 py-0.5 text-xs rounded hover:bg-green-600"
+                  >
+                    Acertada
+                  </button>
+                  <button
+                    onClick={() => cambiarEstadoPartido(index, "fallado")}
+                    className="bg-red-500 text-white px-1 py-0.5 text-xs rounded hover:bg-red-600"
+                  >
+                    Fallada
+                  </button>
+                  <button
+                    onClick={() => cambiarEstadoPartido(index, "pendiente")}
+                    className="bg-yellow-500 text-white px-1 py-0.5 text-xs rounded hover:bg-yellow-600"
+                  >
+                    Pendiente
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-          
-          {!editandoPartidos ? (
-            // Modo visualización
-            combinada.partidos && combinada.partidos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {combinada.partidos.map((partido, idx) => (
-                  <div key={idx} className={`border-2 rounded-lg p-4 relative transition ${
-                    partido.estado === "acertado" 
-                      ? "bg-gradient-to-br from-green-50 to-green-100 border-green-400" 
-                      : partido.estado === "fallado"
-                      ? "bg-gradient-to-br from-red-50 to-red-100 border-red-400"
-                      : "bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-400"
-                  }`}>
-                    <div className="text-lg font-bold text-gray-800">{partido.equipo}</div>
-                    <div className="text-sm text-gray-600">Liga: {partido.liga}</div>
-                    <div className="text-sm text-gray-600">Apuesta: {partido.apuesta}</div>
-                    <div className="text-sm text-gray-600">Criterio: {partido.justificacion || "No definido"}</div>
-                    <div className="text-sm text-gray-600">Cuota: {partido.cuota}</div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-gray-600">No hay partidos disponibles para esta combinada.</div>
-            )
-          ) : (
-            // Modo edición
-            <div>
-              <div className="grid grid-cols-1 gap-3 mb-4">
-                {partidosTemp.map((partido, idx) => (
-                  <div key={idx} className="bg-gray-50 border-2 border-gray-300 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                      <div>
-                        <label className="text-xs text-gray-700 font-semibold block mb-1">Equipo:</label>
-                        <input
-                          type="text"
-                          value={partido.equipo}
-                          onChange={(e) => {
-                            const nuevos = [...partidosTemp];
-                            nuevos[idx].equipo = e.target.value;
-                            setPartidosTemp(nuevos);
-                          }}
-                          className="w-full border-2 border-gray-300 rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs text-gray-700 font-semibold block mb-1">Apuesta:</label>
-                        <input
-                          type="text"
-                          value={partido.apuesta}
-                          onChange={(e) => {
-                            const nuevos = [...partidosTemp];
-                            nuevos[idx].apuesta = e.target.value;
-                            setPartidosTemp(nuevos);
-                          }}
-                          className="w-full border-2 border-gray-300 rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs text-gray-700 font-semibold block mb-1">Cuota:</label>
-                        <input
-                          type="text"
-                          value={partido.cuota}
-                          onChange={(e) => {
-                            const nuevos = [...partidosTemp];
-                            nuevos[idx].cuota = e.target.value;
-                            setPartidosTemp(nuevos);
-                          }}
-                          className="w-full border-2 border-gray-300 rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs text-gray-700 font-semibold block mb-1">Liga:</label>
-                        <input
-                          type="text"
-                          value={partido.liga}
-                          onChange={(e) => {
-                            const nuevos = [...partidosTemp];
-                            nuevos[idx].liga = e.target.value;
-                            setPartidosTemp(nuevos);
-                          }}
-                          className="w-full border-2 border-gray-300 rounded px-2 py-1 text-sm"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={() => setEditandoPartidos(false)}
-                  className="bg-gray-300 text-gray-800 px-3 py-2 rounded-lg text-sm font-bold hover:bg-gray-400 transition"
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={guardarPartidosEditados}
-                  className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition"
-                >
-                  Guardar Cambios
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Controles Admin */}

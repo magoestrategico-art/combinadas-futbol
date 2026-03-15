@@ -19,12 +19,12 @@ export default function HomePage() {
   // VERSIÓN: 2.0 - Sistema de Jornadas Implementado
 
   // Estructura de partido editable
-  const [partidos10, setPartidos10] = useState([]);
+  const [partidos10, setPartidos10] = useState<any[]>([]); // Cambiar el tipo inicial a 'any[]' para evitar errores de tipo
 
   // Estructura de partido editable
-  const [partidos5, setPartidos5] = useState([]);
+  const [partidos5, setPartidos5] = useState<any[]>([]); // Cambiar el tipo inicial a 'any[]' para evitar errores de tipo
 
-  const [partidos3, setPartidos3] = useState([]);
+  const [partidos3, setPartidos3] = useState<any[]>([]); // Cambiar el tipo inicial a 'any[]' para evitar errores de tipo
 
   const [tab, setTab] = useState(0);
   const [selected, setSelected] = useState([0, 0, 0]);
@@ -45,17 +45,79 @@ export default function HomePage() {
   const [visitas, setVisitas] = useState<number | null>(null);
 
   // NUEVO: Estados para temporada y jornada
-  const [temporadaActual, setTemporadaActual] = useState("2024/25");
+  const [temporadaActual, setTemporadaActual] = useState("2025/26");
   const [jornadaActual, setJornadaActual] = useState(1);
+
+  // Función para actualizar la jornada en Firestore
+  const actualizarJornada = async (nuevaJornada: number) => {
+    if (!isCreator) {
+      console.warn("El usuario no es administrador. No se puede actualizar la jornada.");
+      return;
+    }
+
+    try {
+      const configRef = doc(db, "config", "jornadaActual");
+      console.log("Intentando actualizar la jornada en Firestore a:", nuevaJornada);
+      console.log("Verificando conexión con Firestore y permisos del usuario...");
+
+      // Intentar actualizar el documento en Firestore
+      await setDoc(configRef, { jornada: nuevaJornada }, { merge: true });
+      console.log("Jornada actualizada correctamente en Firestore.");
+
+      // Actualizar el estado local
+      setJornadaActual(nuevaJornada);
+      console.log("Estado local de jornadaActual actualizado a:", nuevaJornada);
+    } catch (error) {
+      console.error("Error al actualizar la jornada en Firestore:", error);
+    }
+  };
+
+  // Manejar el cambio de jornada desde el input
+  const manejarCambioJornada = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const nuevaJornada = parseInt(e.target.value) || 1;
+    console.log("Nuevo valor ingresado para jornada:", nuevaJornada);
+    setJornadaActual(nuevaJornada);
+    console.log("Llamando a la función actualizarJornada con el valor:", nuevaJornada);
+    actualizarJornada(nuevaJornada);
+  };
+
+  // Cargar la jornada actual desde Firestore al cargar la página
+  useEffect(() => {
+    async function cargarJornada() {
+      try {
+        const configRef = doc(db, "config", "jornadaActual");
+        console.log("Intentando cargar la jornada desde Firestore...");
+        const snapshot = await getDoc(configRef);
+        if (snapshot.exists()) {
+          const data = snapshot.data();
+          console.log("Documento obtenido de Firestore:", data);
+          if (data.jornada !== undefined) {
+            setJornadaActual(data.jornada); // Asegurarse de que el estado se actualice correctamente
+            console.log("Jornada cargada correctamente:", data.jornada);
+          } else {
+            console.warn("El documento 'jornadaActual' no contiene el campo 'jornada'.");
+          }
+        } else {
+          console.warn("No se encontró el documento 'jornadaActual' en Firestore.");
+        }
+      } catch (error) {
+        console.error("Error al cargar la jornada actual desde Firestore:", error);
+      }
+    }
+
+    cargarJornada();
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log("Evento onAuthStateChanged disparado. Usuario UID:", user?.uid, "Timestamp:", new Date().toISOString());
       setLoggedIn(!!user);
       setIsCreator(!!user && user.uid === CREATOR_UID);
-      
+
       if (user) {
+        console.log("Usuario autenticado:", user.uid);
         setWelcome("¡Bienvenido!");
-        
+
         // Verificar si es premium
         if (user.uid === CREATOR_UID) {
           setIsPremium(true);
@@ -66,7 +128,7 @@ export default function HomePage() {
               const userData = userDoc.data();
               const ahora = new Date();
               const expira = userData.premiumExpira?.toDate();
-              
+
               if (userData.isPremium && expira && expira > ahora) {
                 setIsPremium(true);
               } else {
@@ -79,11 +141,16 @@ export default function HomePage() {
           }
         }
       } else {
+        console.log("No hay usuario autenticado.");
         setWelcome("");
         setIsPremium(false);
       }
     });
-    return () => unsubscribe();
+
+    return () => {
+      console.log("Desuscribiendo evento onAuthStateChanged.");
+      unsubscribe();
+    };
   }, []);
 
   // Cargar y guardar partidos de Firestore para 10, 5 y 3
@@ -93,7 +160,7 @@ export default function HomePage() {
       if (snap10.exists()) {
         const data = snap10.data();
         if (Array.isArray(data.partidos) && data.partidos.length >= 5) {
-          setPartidos10(data.partidos);
+          setPartidos10(data.partidos); // Esto ahora será compatible con el tipo 'any[]'
         } else {
           console.warn("El documento 'partidos10' no contiene al menos 5 partidos válidos.");
         }
@@ -394,8 +461,9 @@ export default function HomePage() {
       {isCreator && (
         <div className="flex justify-center gap-3 mt-3 px-3">
           <div className="bg-purple-100 border-2 border-purple-400 rounded-lg px-4 py-2 flex items-center gap-2 shadow">
-            <label className="text-purple-900 font-bold text-sm">📅 Temporada:</label>
+            <label htmlFor="temporada" className="text-purple-900 font-bold text-sm">📅 Temporada:</label>
             <input 
+              id="temporada"
               type="text" 
               value={temporadaActual}
               onChange={(e) => setTemporadaActual(e.target.value)}
@@ -404,11 +472,18 @@ export default function HomePage() {
             />
           </div>
           <div className="bg-green-100 border-2 border-green-400 rounded-lg px-4 py-2 flex items-center gap-2 shadow">
-            <label className="text-green-900 font-bold text-sm">🏁 Jornada:</label>
+            <label htmlFor="jornada" className="text-green-900 font-bold text-sm">🏁 Jornada:</label>
             <input 
+              id="jornada"
               type="number" 
               value={jornadaActual}
-              onChange={(e) => setJornadaActual(parseInt(e.target.value) || 1)}
+              onChange={(e) => {
+                const nuevaJornada = parseInt(e.target.value) || 1;
+                console.log("Nuevo valor ingresado para jornada:", nuevaJornada);
+                setJornadaActual(nuevaJornada);
+                console.log("Llamando a la función actualizarJornada con el valor:", nuevaJornada);
+                actualizarJornada(nuevaJornada);
+              }}
               className="bg-white border border-green-300 rounded px-2 py-1 text-sm font-semibold w-16 focus:outline-none focus:border-green-500"
               min="1"
             />
@@ -420,7 +495,7 @@ export default function HomePage() {
       <div className="flex flex-wrap justify-center gap-2 mt-3 px-3">
         {loggedIn && (
           <Link href="/combinadas" className="bg-blue-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-blue-800 transition text-xs md:text-sm">
-            <span>👤</span> Mis Combinadas
+            <span>👤</span> GUIA Y TUTORIAL
           </Link>
         )}
         {!isPremium && (
@@ -471,11 +546,11 @@ export default function HomePage() {
                         <select className="w-20 text-xs rounded px-1 py-1 border" value={p.dia} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, dia: e.target.value } : x))}>
                           <option value="Lunes">Lunes</option>
                           <option value="Martes">Martes</option>
-                          <option value="Miércoles">Miér</option>
+                          <option value="Miércoles">Miércoles</option>
                           <option value="Jueves">Jueves</option>
-                          <option value="Viernes">Vier</option>
-                          <option value="Sábado">Sáb</option>
-                          <option value="Domingo">Dom</option>
+                          <option value="Viernes">Viernes</option>
+                          <option value="Sábado">Sábado</option>
+                          <option value="Domingo">Domingo</option>
                         </select>
                         <input type="text" placeholder="dd/mm/yyyy" className="w-24 text-xs rounded px-1 py-1 border" value={p.fecha} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, fecha: e.target.value } : x))} />
                         <input type="text" placeholder="HH:MM" className="w-16 text-xs rounded px-1 py-1 border" value={p.hora} onChange={e => setPartidos10(arr => arr.map((x, i) => i === idx ? { ...x, hora: e.target.value } : x))} />
@@ -504,10 +579,10 @@ export default function HomePage() {
                         <span className="bg-orange-400 text-white font-semibold rounded-full px-3 py-1 text-xs">{p.apuesta}</span>
                         <span className="text-blue-600 font-bold text-sm">Cuota: {p.cuota}</span>
                       </div>
-                      <div className="flex gap-1.5 mt-0.5">
-                        {p.estado === "acertado" && <span className="bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-lg text-xs">✔ Acertado</span>}
-                        {p.estado === "fallado" && <span className="bg-red-100 text-red-500 font-semibold px-2 py-0.5 rounded-lg text-xs">✗ Fallado</span>}
-                        {p.estado === "pendiente" && <span className="bg-gray-100 text-gray-500 font-semibold px-2 py-0.5 rounded-lg text-xs">Pendiente</span>}
+                      <div className="flex gap-2 mt-1">
+                        {p.estado === "acertado" && <span className="bg-green-100 text-green-700 font-bold px-3 py-1 rounded-xl text-xs">✔ Acertado</span>}
+                        {p.estado === "fallado" && <span className="bg-red-100 text-red-500 font-bold px-3 py-1 rounded-xl text-xs">✗ Fallado</span>}
+                        {p.estado === "pendiente" && <span className="bg-gray-100 text-gray-500 font-bold px-3 py-1 rounded-xl text-xs">Pendiente</span>}
                       </div>
                     </>
                   )}
