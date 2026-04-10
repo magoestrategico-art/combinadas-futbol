@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getFirestore } from 'firebase-admin/firestore';
-import { initializeApp, applicationDefault, cert } from 'firebase-admin/app';
-import { db } from '@/firebase-config';
+import { initializeApp, getApps, applicationDefault } from 'firebase-admin/app';
 
-// Inicializar Firebase si no está inicializado
-if (!initializeApp.length) {
+// Inicializar Firebase Admin si no está inicializado
+if (!getApps().length) {
   initializeApp({
     credential: applicationDefault(),
   });
