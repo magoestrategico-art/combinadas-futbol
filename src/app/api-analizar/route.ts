@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API_KEY = process.env.FOOTBALL_DATA_KEY || "";
+const API_KEY = process.env.FOOTBALL_DATA_KEY || process.env.CLAVE_DE_DATOS_DE_FÚTBOL || "";
 
 const LIGAS: Record<string, string> = {
   "premier": "PL",
