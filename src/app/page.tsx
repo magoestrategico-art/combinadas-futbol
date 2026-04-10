@@ -353,21 +353,6 @@ export default function HomePage() {
     }
   });
 
-  // Función temporal para inspeccionar los datos de la colección historialCombinadas en Firestore
-  async function inspectFirestoreData() {
-    try {
-      const snapshot = await getDocs(collection(db, "historialCombinadas"));
-      snapshot.forEach((doc) => {
-        console.log("Documento:", doc.id, "=>", doc.data());
-      });
-    } catch (error) {
-      console.error("Error al inspeccionar los datos de Firestore:", error);
-    }
-  }
-
-  // Llamar a la función para inspeccionar los datos
-  inspectFirestoreData();
-
   return (
     <main className="min-h-screen w-full bg-[#204080] flex flex-col">
       {isCreator && (
@@ -515,6 +500,9 @@ export default function HomePage() {
           </Link>
         )}
         <Link href="/simulador" className="bg-green-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold shadow hover:bg-green-600 transition text-xs md:text-sm">Simulador</Link>
+        <Link href="/analisis" className="bg-blue-500 text-white px-3 py-2 md:px-4 md:py-2 rounded-lg font-semibold flex items-center gap-1 shadow border border-white hover:bg-blue-600 transition text-xs md:text-sm">
+          <span>📊</span> Ir a Análisis
+        </Link>
       </div>
 
       {/* Tarjetas de combinadas con edición admin */}
